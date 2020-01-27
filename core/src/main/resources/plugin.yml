@@ -1,0 +1,5 @@
+name: CustomMining
+version: ${project.version}
+author: Illuzionz Studios
+main: com.illuzionzstudios.custommining.CustomMining
+description: Fully rework the mining system in minecraft

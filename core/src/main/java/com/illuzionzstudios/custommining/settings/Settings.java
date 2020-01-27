@@ -1,0 +1,42 @@
+package com.illuzionzstudios.custommining.settings;
+
+import com.illuzionzstudios.core.config.Config;
+import com.illuzionzstudios.core.config.ConfigSetting;
+import com.illuzionzstudios.custommining.CustomMining;
+
+/**
+ * Copyright © 2020 Property of Illuzionz Studios, LLC
+ * All rights reserved. No part of this publication may be reproduced, distributed, or
+ * transmitted in any form or by any means, including photocopying, recording, or other
+ * electronic or mechanical methods, without the prior written permission of the publisher,
+ * except in the case of brief quotations embodied in critical reviews and certain other
+ * noncommercial uses permitted by copyright law. Any licensing of this software overrides
+ * this statement.
+ */
+
+/**
+ * General settings for the plugin
+ */
+public class Settings {
+
+    static final Config config = CustomMining.getInstance().getCoreConfig();
+
+    public static final ConfigSetting LANGUGE_MODE = new ConfigSetting(config, "System.Language Mode", "en_US",
+            "The language file to use for the plugin",
+            "More language files (if available) can be found in the plugins locale folder.");
+
+    public static final ConfigSetting AUTOSAVE = new ConfigSetting(config, "System.Autosave Interval", 60,
+            "Seconds between autosaves and loading the updated config");
+
+
+    /**
+     * Setup the configuration
+     */
+    public static void loadSettings() {
+        config.load();
+        config.setAutoremove(true).setAutosave(true).setAutosaveInterval(AUTOSAVE.getInt());
+
+        config.saveChanges();
+    }
+
+}
