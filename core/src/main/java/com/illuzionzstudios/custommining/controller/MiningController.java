@@ -1,8 +1,10 @@
 package com.illuzionzstudios.custommining.controller;
 
 import com.illuzionzstudios.core.bukkit.controller.BukkitController;
+import com.illuzionzstudios.core.compatibility.ServerVersion;
 import com.illuzionzstudios.core.scheduler.MinecraftScheduler;
-import com.illuzionzstudios.custommining.CustomMining;
+import com.illuzionzstudios.core.util.Logger;
+import com.illuzionzstudios.custommining.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
@@ -24,8 +26,32 @@ import org.bukkit.event.Listener;
 public enum MiningController implements BukkitController<CustomMining>, Listener {
     INSTANCE;
 
+    /**
+     * Our custom handler to handle NMS packets
+     * between versions
+     */
+    private MiningHandler handler;
+
     @Override
     public void initialize(CustomMining plugin) {
+
+        // Setup handler
+        if (ServerVersion.isServerVersion(ServerVersion.V1_12)) {
+            this.handler = new MiningHandler_1_12_R1();
+        } else if (ServerVersion.isServerVersion(ServerVersion.V1_13)) {
+            this.handler = new MiningHandler_1_13_R2();
+        } else if (ServerVersion.isServerVersion(ServerVersion.V1_14)) {
+            this.handler = new MiningHandler_1_14_R1();
+        } else if (ServerVersion.isServerVersion(ServerVersion.V1_15)) {
+            this.handler = new MiningHandler_1_15_R1();
+        }
+
+        // If NMS not handled, not available on server
+        if (this.handler == null) {
+            Logger.severe("Not supported on your server version " + ServerVersion.getServerVersionString());
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return;
+        }
 
         // Register our services
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);

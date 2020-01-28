@@ -21,6 +21,14 @@ public class Settings {
 
     static final Config config = CustomMining.getInstance().getCoreConfig();
 
+    public static final ConfigSetting BROADCAST_ANIMATION = new ConfigSetting(config, "Main.Broadcast Animation", true,
+            "If set to true, all players in the radius when breaking a block",
+            "will see the breaking animation");
+
+    public static final ConfigSetting UNBREAKBLE_REGIONS = new ConfigSetting(config, "Main.Unbreakble Regions", true,
+            "Make it so if worldguard makes a region unbreakable, they appear unbreakble",
+            "like bedrock. (Required WorldGuard)");
+
     public static final ConfigSetting LANGUGE_MODE = new ConfigSetting(config, "System.Language Mode", "en_US",
             "The language file to use for the plugin",
             "More language files (if available) can be found in the plugins locale folder.");
