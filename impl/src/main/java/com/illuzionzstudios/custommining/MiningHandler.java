@@ -1,6 +1,10 @@
 package com.illuzionzstudios.custommining;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * Copyright © 2020 Property of Illuzionz Studios, LLC
@@ -28,6 +32,15 @@ public interface MiningHandler {
     void sendBlockBreak(org.bukkit.block.Block block, int damage, Player... players);
 
     /**
+     * Update the damage texture being displayed on a block
+     *
+     * @param block The block to send breaking to
+     * @param damage A param used for which break cycle to display
+     * @param players Players to send block break to
+     */
+    void sendBlockBreak(org.bukkit.block.Block block, int damage, List<Player> players);
+
+    /**
      * Send client side mining fatigue to the player
      * This stops any breaking animation so we
      * can handle it ourselves
@@ -35,5 +48,12 @@ public interface MiningHandler {
      * @param player Player we are modifying packets for
      */
     void cancelClientBreaking(Player player);
+
+    /**
+     * Get the default hardness of a block
+     *
+     * @param block The block to check
+     */
+    float getDefaultBlockHardness(org.bukkit.block.Block block);
 
 }

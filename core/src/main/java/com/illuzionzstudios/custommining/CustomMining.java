@@ -2,6 +2,7 @@ package com.illuzionzstudios.custommining;
 
 import com.illuzionzstudios.core.config.Config;
 import com.illuzionzstudios.core.plugin.IlluzionzPlugin;
+import com.illuzionzstudios.custommining.controller.HardnessController;
 import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.settings.Settings;
 
@@ -35,6 +36,7 @@ public final class CustomMining extends IlluzionzPlugin {
         this.setLocale(Settings.LANGUGE_MODE.getString(), false);
 
         // Load controllers
+        HardnessController.INSTANCE.initialize(this);
         MiningController.INSTANCE.initialize(this);
     }
 

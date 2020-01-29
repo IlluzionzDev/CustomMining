@@ -1,9 +1,17 @@
 package com.illuzionzstudios.custommining.task;
 
+import com.illuzionzstudios.core.util.PlayerUtil;
+import com.illuzionzstudios.custommining.controller.MiningController;
+import com.illuzionzstudios.custommining.settings.Settings;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 /**
  * Copyright © 2020 Property of Illuzionz Studios, LLC
@@ -67,5 +75,14 @@ public class MiningTask implements Runnable {
     @Override
     public void run() {
         if (!enabled) return;
+
+        // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
+        int damage = (int) (counter / (float) breakTime * 10);
+
+        // Send the damage animation state once for each increment
+        if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / (float) breakTime * 10))) {
+            // Auto gets who to send animation to based on settings
+            MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Arrays.asList(player));
+        }
     }
 }

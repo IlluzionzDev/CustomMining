@@ -6,7 +6,11 @@ import com.illuzionzstudios.core.scheduler.MinecraftScheduler;
 import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.custommining.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  * Copyright © 2020 Property of Illuzionz Studios, LLC
@@ -30,7 +34,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
      * Our custom handler to handle NMS packets
      * between versions
      */
-    private MiningHandler handler;
+    public MiningHandler handler;
 
     @Override
     public void initialize(CustomMining plugin) {
@@ -61,5 +65,10 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
     @Override
     public void stop(CustomMining plugin) {
 
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        event.getPlayer().sendMessage("Hardness: " + handler.getDefaultBlockHardness(event.getClickedBlock()));
     }
 }
