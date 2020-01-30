@@ -41,7 +41,8 @@ public final class CustomMining extends IlluzionzPlugin {
     }
 
     public void onPluginDisable() {
-
+        HardnessController.INSTANCE.stop(this);
+        MiningController.INSTANCE.stop(this);
     }
 
     public void onConfigReload() {

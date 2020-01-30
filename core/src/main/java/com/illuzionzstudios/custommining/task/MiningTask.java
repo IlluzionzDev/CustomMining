@@ -84,5 +84,13 @@ public class MiningTask implements Runnable {
             // Auto gets who to send animation to based on settings
             MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Arrays.asList(player));
         }
+
+        counter++;
+
+        // Reached break time
+        if (counter == breakTime) {
+            // Handle breaking the block
+            MiningController.INSTANCE.breakBlock(player, block);
+        }
     }
 }
