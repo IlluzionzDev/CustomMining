@@ -21,6 +21,10 @@ public class Settings {
 
     static final Config config = CustomMining.getInstance().getCoreConfig();
 
+    public static final ConfigSetting SAVE_PROGRESS = new ConfigSetting(config, "Main.Save Progress", true,
+            "When a player stops mining a block, it will pause the breaking animation at",
+            "where it was, and resume when they continue mining it");
+
     public static final ConfigSetting BROADCAST_ANIMATION = new ConfigSetting(config, "Main.Broadcast Animation", true,
             "If set to true, all players in the radius when breaking a block",
             "will see the breaking animation");

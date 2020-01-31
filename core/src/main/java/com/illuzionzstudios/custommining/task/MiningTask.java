@@ -1,5 +1,7 @@
 package com.illuzionzstudios.custommining.task;
 
+import com.illuzionzstudios.core.scheduler.MinecraftScheduler;
+import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.core.util.PlayerUtil;
 import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.settings.Settings;
@@ -53,7 +55,7 @@ public class MiningTask implements Runnable {
     /**
      * Total time to break the block in ticks
      */
-    private final int breakTime;
+    private final float breakTime;
 
     /**
      * If true, the task will tick breaking.
@@ -62,7 +64,7 @@ public class MiningTask implements Runnable {
     @Setter
     private boolean enabled = true;
 
-    public MiningTask(Player player, Block block, int breakTime) {
+    public MiningTask(Player player, Block block, float breakTime) {
         this.player = player;
         this.block = block;
         this.breakTime = breakTime;
@@ -81,6 +83,7 @@ public class MiningTask implements Runnable {
 
         // Send the damage animation state once for each increment
         if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / (float) breakTime * 10))) {
+            Logger.debug("Sent animation");
             // Auto gets who to send animation to based on settings
             MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Arrays.asList(player));
         }
@@ -90,7 +93,9 @@ public class MiningTask implements Runnable {
         // Reached break time
         if (counter == breakTime) {
             // Handle breaking the block
-            MiningController.INSTANCE.breakBlock(player, block);
+            MinecraftScheduler.get().synchronize(() -> {
+                MiningController.INSTANCE.breakBlock(player, block);
+            });
         }
     }
 }

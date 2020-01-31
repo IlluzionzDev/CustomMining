@@ -35,7 +35,7 @@ public class MiningHandler_1_14_R1 implements MiningHandler {
     @Override
     public void sendBlockBreak(org.bukkit.block.Block block, int damage, List<Player> players) {
         // Generate unique id based off location
-        String idString = String.valueOf(block.getX()) + block.getY() + block.getZ();
+        String idString = String.valueOf(Math.abs(block.getX())) + Math.abs(block.getY()) + Math.abs(block.getZ());
         int id = Integer.parseInt(idString);
         PacketPlayOutBlockBreakAnimation breakBlockPacket = new PacketPlayOutBlockBreakAnimation(id, new BlockPosition(block.getX(), block.getY(), block.getZ()), damage);
 
