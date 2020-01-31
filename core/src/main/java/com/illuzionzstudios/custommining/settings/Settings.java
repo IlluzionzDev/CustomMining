@@ -29,6 +29,12 @@ public class Settings {
             "How many seconds after saving progress on block to delete progress.",
             "This is to maximise performance and reduce lag, only works if Save Progress is enabled");
 
+    public static final ConfigSetting CLEANUP_THRESHOLD = new ConfigSetting(config, "Main.Cleanup Threshold", 300,
+            "Seconds after a block starts being broken to remove the breaking task.",
+            "This is in order to clear any tasks that didn't get enabled and not lag the server.",
+            "If you have long break times set this high so it doesn't clear as they're breaking.",
+            "Default clear every 5 minutes of old tasks");
+
     public static final ConfigSetting BROADCAST_ANIMATION = new ConfigSetting(config, "Main.Broadcast Animation", true,
             "If set to true, all players in the radius when breaking a block",
             "will see the breaking animation");

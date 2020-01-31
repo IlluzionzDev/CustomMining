@@ -42,6 +42,11 @@ public class MiningTask implements Runnable {
     private int ticks = 0;
 
     /**
+     * Ticks task is alive
+     */
+    private int totalTicks = 0;
+
+    /**
      * Our task ID to identify the task
      */
     @Setter
@@ -82,10 +87,13 @@ public class MiningTask implements Runnable {
     @Override
     public void run() {
         ticks++;
+        totalTicks++;
+
+        int totalSeconds = totalTicks / 20; // Total seconds passed
 
         // Handle cleanup here
         if (Settings.SAVE_PROGRESS.getBoolean()) {
-            int seconds = this.ticks * 20;
+            int seconds = ticks / 20; // Seconds from ticks
 
             if (seconds >= Settings.CLEANUP_DELAY.getInt()) {
                 MiningController.INSTANCE.cancelBreaking(block);
@@ -94,6 +102,14 @@ public class MiningTask implements Runnable {
         }
 
         if (!enabled) return;
+
+        // Been enabled for over threshhold
+        // Urgent cleanup so it doesn't run forever
+        // and lag the server
+        if (totalSeconds >= Settings.CLEANUP_THRESHOLD.getInt()) {
+            MiningController.INSTANCE.cancelBreaking(block);
+            return;
+        }
 
         // Reset ticks since it was enabled
         this.ticks = 0;

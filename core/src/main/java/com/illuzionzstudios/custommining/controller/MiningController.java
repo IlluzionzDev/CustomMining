@@ -164,7 +164,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
 
             // Unbreakble
             // TODO: Handle in HardnessController
-            if (handler.getDefaultBlockHardness(block) < 0) {
+            if (handler.getDefaultBlockHardness(block) < 0.0) {
                 return;
             }
 
