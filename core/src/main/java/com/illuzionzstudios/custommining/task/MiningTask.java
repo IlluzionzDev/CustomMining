@@ -37,6 +37,11 @@ public class MiningTask implements Runnable {
     private int counter = 0;
 
     /**
+     * Ticks passed since not enabled
+     */
+    private int ticks = 0;
+
+    /**
      * Our task ID to identify the task
      */
     @Setter
@@ -76,13 +81,28 @@ public class MiningTask implements Runnable {
      */
     @Override
     public void run() {
+        ticks++;
+
+        // Handle cleanup here
+        if (Settings.SAVE_PROGRESS.getBoolean()) {
+            int seconds = this.ticks * 20;
+
+            if (seconds >= Settings.CLEANUP_DELAY.getInt()) {
+                MiningController.INSTANCE.cancelBreaking(block);
+                return;
+            }
+        }
+
         if (!enabled) return;
 
+        // Reset ticks since it was enabled
+        this.ticks = 0;
+
         // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
-        int damage = (int) (counter / (float) breakTime * 10);
+        int damage = (int) (counter / breakTime * 10);
 
         // Send the damage animation state once for each increment
-        if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / (float) breakTime * 10))) {
+        if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / breakTime * 10))) {
             Logger.debug("Sent animation");
             // Auto gets who to send animation to based on settings
             MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Arrays.asList(player));
