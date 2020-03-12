@@ -1,7 +1,7 @@
 package com.illuzionzstudios.custommining.settings;
 
-import com.illuzionzstudios.core.config.Config;
-import com.illuzionzstudios.core.config.ConfigSetting;
+import com.illuzionzstudios.config.Config;
+import com.illuzionzstudios.config.ConfigSetting;
 import com.illuzionzstudios.custommining.CustomMining;
 
 /**

@@ -8,17 +8,17 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.illuzionzstudios.compatibility.ServerVersion;
 import com.illuzionzstudios.core.bukkit.controller.BukkitController;
-import com.illuzionzstudios.core.compatibility.ServerVersion;
-import com.illuzionzstudios.core.scheduler.MinecraftScheduler;
-import com.illuzionzstudios.core.scheduler.sync.Async;
-import com.illuzionzstudios.core.scheduler.sync.Rate;
 import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.core.util.PlayerUtil;
 import com.illuzionzstudios.custommining.*;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.custommining.task.MiningTask;
-import org.bukkit.Bukkit;
+import com.illuzionzstudios.scheduler.MinecraftScheduler;
+import com.illuzionzstudios.scheduler.sync.Async;
+import com.illuzionzstudios.scheduler.sync.Rate;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,6 +27,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
@@ -139,6 +140,9 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+
+        // Instabreak when in creative so skip entirely
+        if (player.getGameMode() == GameMode.CREATIVE) return;
 
         // Make sure it doesn't give null when block is air
         if (event.getAction() == Action.LEFT_CLICK_AIR ||
@@ -295,7 +299,8 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
         cancelBreaking(block);
 
         // Actually break the block
-        block.breakNaturally();
+        block.breakNaturally(player.getInventory().getItemInMainHand());
+        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, Material.ANVIL);
 
         // Force call block break event
         BlockBreakEvent blockBreak = new BlockBreakEvent(block, player);

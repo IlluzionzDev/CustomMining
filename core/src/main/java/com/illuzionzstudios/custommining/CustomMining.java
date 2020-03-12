@@ -1,10 +1,11 @@
 package com.illuzionzstudios.custommining;
 
-import com.illuzionzstudios.core.config.Config;
+import com.illuzionzstudios.config.Config;
 import com.illuzionzstudios.core.plugin.IlluzionzPlugin;
 import com.illuzionzstudios.custommining.controller.HardnessController;
 import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.settings.Settings;
+import com.illuzionzstudios.scheduler.bukkit.BukkitScheduler;
 
 import java.util.List;
 
@@ -34,6 +35,8 @@ public final class CustomMining extends IlluzionzPlugin {
         // Load all settings and language
         Settings.loadSettings();
         this.setLocale(Settings.LANGUGE_MODE.getString(), false);
+
+        new BukkitScheduler(this).initialize();
 
         // Load controllers
         HardnessController.INSTANCE.initialize(this);

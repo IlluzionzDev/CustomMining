@@ -1,12 +1,13 @@
 package com.illuzionzstudios.custommining.task;
 
-import com.illuzionzstudios.core.scheduler.MinecraftScheduler;
 import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.core.util.PlayerUtil;
 import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.settings.Settings;
+import com.illuzionzstudios.scheduler.MinecraftScheduler;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.server.v1_15_R1.PacketPlayOutWorldParticles;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -119,7 +120,6 @@ public class MiningTask implements Runnable {
 
         // Send the damage animation state once for each increment
         if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / breakTime * 10))) {
-            Logger.debug("Sent animation");
             // Auto gets who to send animation to based on settings
             MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Arrays.asList(player));
         }
