@@ -15,6 +15,7 @@ import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Copyright © 2020 Property of Illuzionz Studios, LLC
@@ -121,7 +122,7 @@ public class MiningTask implements Runnable {
         // Send the damage animation state once for each increment
         if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / breakTime * 10))) {
             // Auto gets who to send animation to based on settings
-            MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Arrays.asList(player));
+            MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
         }
 
         counter++;
