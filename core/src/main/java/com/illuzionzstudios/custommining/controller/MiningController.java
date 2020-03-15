@@ -261,18 +261,16 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
             if (miningTasks.containsKey(player.getUniqueId())) {
                 ArrayList<MiningTask> list = miningTasks.get(player.getUniqueId());
 
-                MiningTask task = null;
+                MiningTask task;
 
-                // See which tasks have the block
-                // TODO: Probably optimize this
-                for (MiningTask miningTask : list) {
-                    if (miningTask.getBlock().getLocation().equals(block.getLocation())) {
-                        task = miningTask;
-                        break;
-                    } else {
-                        return;
-                    }
-                }
+                // Only need the first as we can't have two tasks at the same location
+                Optional<MiningTask> taskStream = list.stream().filter(miningTask -> miningTask.getBlock().getLocation().equals(block.getLocation())).findFirst();
+
+                // If no task simply return because we don't need to do anything else
+                if (!taskStream.isPresent()) return;
+
+                // Finally assign found task to our instanced task
+                task = taskStream.get();
 
                 scheduler.cancelTask(task.getTaskID());
                 list.remove(task);

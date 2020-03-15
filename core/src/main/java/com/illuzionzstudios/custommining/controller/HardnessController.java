@@ -14,7 +14,12 @@ import com.illuzionzstudios.custommining.CustomMining;
  */
 
 /**
- * Control hardness of blocks
+ * Control hardness of blocks, modifiers etc
+ *
+ * We have to handle things like enchants, physics, potions etc.
+ * All will be configurable giving the server owner full control over
+ * how breaking works on their server. Also there will be permission
+ * based modifiers so certain people can have different modifiers.
  */
 public enum HardnessController implements BukkitController<CustomMining> {
     INSTANCE;
