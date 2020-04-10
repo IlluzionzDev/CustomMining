@@ -58,4 +58,9 @@ public class MiningHandler_1_12_R1 implements MiningHandler {
         // Pass some values, it only returns the hardness so idk what these args are for
         return nmsBlock.a(nmsBlock.getBlockData(), (World) block.getWorld(), new BlockPosition(block.getX(), block.getY(), block.getZ()));
     }
+
+    @Override
+    public void playBreakEffect(org.bukkit.block.Block block) {
+
+    }
 }

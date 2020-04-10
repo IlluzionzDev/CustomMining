@@ -56,4 +56,13 @@ public interface MiningHandler {
      */
     float getDefaultBlockHardness(org.bukkit.block.Block block);
 
+    /**
+     * Play the breaking effect for a block.
+     * This includes the breaking particles
+     * and the breaking sound.
+     *
+     * @param block Block to play effects for
+     */
+    void playBreakEffect(org.bukkit.block.Block block);
+
 }

@@ -55,4 +55,8 @@ public class MiningHandler_1_14_R1 implements MiningHandler {
         return CraftMagicNumbers.getBlock(block.getType()).strength;
     }
 
+    @Override
+    public void playBreakEffect(org.bukkit.block.Block block) {
+
+    }
 }

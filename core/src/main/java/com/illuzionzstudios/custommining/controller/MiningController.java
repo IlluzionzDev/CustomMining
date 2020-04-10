@@ -19,7 +19,10 @@ import com.illuzionzstudios.scheduler.MinecraftScheduler;
 import com.illuzionzstudios.scheduler.sync.Async;
 import com.illuzionzstudios.scheduler.sync.Rate;
 import lombok.Getter;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +32,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
@@ -53,16 +55,14 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
     INSTANCE;
 
     /**
-     * Instance of our main plugin
-     */
-    private CustomMining plugin;
-
-    /**
      * Our custom handler to handle NMS packets
      * between versions
      */
     public MiningHandler handler;
-
+    /**
+     * Instance of our main plugin
+     */
+    private CustomMining plugin;
     /**
      * Scheduler for block breaking
      */
@@ -73,7 +73,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
      * Tasks will be run async and only do sync tasks like
      * breaking blocks when needed to avoid as much lag
      * as possible
-     *
+     * <p>
      * Transient because we don't want to save, it's all cached
      */
     private transient Map<UUID, ArrayList<MiningTask>> miningTasks;
@@ -185,7 +185,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 return;
             }
 
-            // Break time less than 0 so don't break
+            // Break time less than 0 so don't break, unbreakable
             if (HardnessController.INSTANCE.processFinalBreakTime(block, player) < 0.0) {
                 return;
             }
@@ -198,7 +198,8 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 previous = resumeBreaking(player, block);
             }
 
-            // If there is no previously targeted block or if the currently targeted block isn't the same as the previous then destroying the new block
+            // If there is no previously targeted block or if the currently targeted block isn't the same
+            // as the previous then destroying the new block
             if (previous == null || !previous.getBlock().getLocation().equals(block.getLocation())) {
                 // The player has switched targets so the previous block is no longer being destroyed
                 if (previous != null) {
@@ -209,7 +210,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 MiningTask task = new MiningTask(player, block, HardnessController.INSTANCE.processFinalBreakTime(block, player));
 
                 // Do task async, will handle minecraft things sync
-                int taskID = scheduler.scheduleAsyncRepeatingTask(plugin, task, 1L, 1L);
+                int taskID = scheduler.scheduleAsyncRepeatingTask(plugin, task, 0L, 1L);
                 task.setTaskID(taskID);
 
                 // Here we add the breaking to the tasks
@@ -320,7 +321,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
         block.breakNaturally(player.getInventory().getItemInMainHand());
 
         // Block break effect
-        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, Material.DIRT);
+        handler.playBreakEffect(block);
 
         // Force call block break event
         BlockBreakEvent blockBreak = new BlockBreakEvent(block, player);

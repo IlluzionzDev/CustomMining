@@ -1,20 +1,14 @@
 package com.illuzionzstudios.custommining.task;
 
-import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.core.util.PlayerUtil;
 import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.scheduler.MinecraftScheduler;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.server.v1_15_R1.PacketPlayOutWorldParticles;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
