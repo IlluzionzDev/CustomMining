@@ -2,4 +2,5 @@ name: CustomMining
 version: ${project.version}
 author: Illuzionz Studios
 main: com.illuzionzstudios.custommining.CustomMining
+api-version: "1.15"
 description: Fully rework the mining system in minecraft

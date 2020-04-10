@@ -88,6 +88,11 @@ public class MiningTask implements Runnable {
      */
     @Override
     public void run() {
+        // If player can't trigger tasks, immediately pause the task
+        if (MiningController.INSTANCE.getDisabled().contains(player.getUniqueId())) {
+            return;
+        }
+
         ticks++;
         totalTicks++;
 

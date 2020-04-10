@@ -18,6 +18,7 @@ import com.illuzionzstudios.custommining.task.MiningTask;
 import com.illuzionzstudios.scheduler.MinecraftScheduler;
 import com.illuzionzstudios.scheduler.sync.Async;
 import com.illuzionzstudios.scheduler.sync.Rate;
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -76,6 +77,14 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
      */
     private transient Map<UUID, ArrayList<MiningTask>> miningTasks;
 
+    /**
+     * List of player's who currently can't tick
+     * {@link MiningTask}'s. Used if the player triggered one
+     * accidentally or can't mine that block.
+     */
+    @Getter
+    private List<UUID> disabled;
+
     @Override
     public void initialize(CustomMining plugin) {
 
@@ -100,6 +109,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
         }
 
         this.miningTasks = new HashMap<>();
+        this.disabled = new ArrayList<>();
 
         // Register our services
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -157,13 +167,19 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
             // Cancel as we will handle ourselves
             event.setCancelled(true);
 
+            // About to create new task make sure
+            // to remove disabled
+            this.disabled.remove(player.getUniqueId());
+
             // Our block that was clicked
             Block block = event.getClickedBlock();
 
             // Here handle the break time based on conditions
 
             // Here breaktime is 0, so we just insta break
-            if (HardnessController.INSTANCE.processFinalBreakTime(block, player) == 0) {
+            // Also check default block hardness because can't change
+            // break time of default insta breaks
+            if (HardnessController.INSTANCE.processFinalBreakTime(block, player) == 0 || handler.getDefaultBlockHardness(block) == 0.0) {
                 breakBlock(player, block);
                 return;
             }
@@ -303,7 +319,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
         block.breakNaturally(player.getInventory().getItemInMainHand());
 
         // Block break effect
-        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType(), 1);
+        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, Material.DIRT);
 
         // Force call block break event
         BlockBreakEvent blockBreak = new BlockBreakEvent(block, player);
@@ -322,10 +338,16 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 EnumWrappers.PlayerDigType digType = packet.getPlayerDigTypes().getValues().get(0);
                 if (digType.equals(EnumWrappers.PlayerDigType.ABORT_DESTROY_BLOCK) ||
                         digType.equals(EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK)) {
-                    BlockPosition position = packet.getBlockPositionModifier().getValues().get(0);
-                    Block createdBlock = event.getPlayer().getWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
 
-                    pauseBreaking(event.getPlayer(), createdBlock);
+                    // Loop through abandod block and make sure to stop them all
+                    for (BlockPosition position : packet.getBlockPositionModifier().getValues()) {
+                        Block createdBlock = event.getPlayer().getWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
+
+                        pauseBreaking(event.getPlayer(), createdBlock);
+                    }
+
+                    // Disable ticking tasks
+                    getDisabled().add(event.getPlayer().getUniqueId());
                 }
             }
         });
