@@ -1,8 +1,5 @@
 package com.illuzionzstudios.custommining.controller;
 
-import com.illuzionzstudios.core.bukkit.controller.BukkitController;
-import com.illuzionzstudios.custommining.CustomMining;
-
 /**
  * Copyright © 2020 Property of Illuzionz Studios, LLC
  * All rights reserved. No part of this publication may be reproduced, distributed, or
@@ -12,6 +9,11 @@ import com.illuzionzstudios.custommining.CustomMining;
  * noncommercial uses permitted by copyright law. Any licensing of this software overrides
  * this statement.
  */
+
+import com.illuzionzstudios.core.bukkit.controller.BukkitController;
+import com.illuzionzstudios.custommining.CustomMining;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 /**
  * Control hardness of blocks, modifiers etc
@@ -32,5 +34,23 @@ public enum HardnessController implements BukkitController<CustomMining> {
     @Override
     public void stop(CustomMining plugin) {
 
+    }
+
+    /**
+     * Master method for determining the final break time of a block.
+     * Takes into account all blocks, enchants, potions, regions, and
+     * outputs the value we plug into the MiningTask. Other calculations are done
+     * in other methods but are linked here for the final result
+     *
+     * Returning 0 means instantly break and < 0 means unbreakable
+     *
+     * @param block The block trying to be mined
+     * @param player The player mining the block
+     * @return Break time in ticks
+     */
+    public float processFinalBreakTime(Block block, Player player) {
+
+
+        return 20f;
     }
 }

@@ -27,6 +27,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
@@ -70,8 +71,10 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
      * Tasks will be run async and only do sync tasks like
      * breaking blocks when needed to avoid as much lag
      * as possible
+     *
+     * Transient because we don't want to save, it's all cached
      */
-    private Map<UUID, ArrayList<MiningTask>> miningTasks;
+    private transient Map<UUID, ArrayList<MiningTask>> miningTasks;
 
     @Override
     public void initialize(CustomMining plugin) {
@@ -160,14 +163,13 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
             // Here handle the break time based on conditions
 
             // Here breaktime is 0, so we just insta break
-            if (handler.getDefaultBlockHardness(block) == 0) {
+            if (HardnessController.INSTANCE.processFinalBreakTime(block, player) == 0) {
                 breakBlock(player, block);
                 return;
             }
 
-            // Unbreakble
-            // TODO: Handle in HardnessController
-            if (handler.getDefaultBlockHardness(block) < 0.0) {
+            // Break time less than 0 so don't break
+            if (HardnessController.INSTANCE.processFinalBreakTime(block, player) < 0.0) {
                 return;
             }
 
@@ -187,10 +189,11 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 }
 
                 // Create new instance of block breaking runnable
-                MiningTask tasked = new MiningTask(player, block, 40);
+                MiningTask task = new MiningTask(player, block, HardnessController.INSTANCE.processFinalBreakTime(block, player));
+
                 // Do task async, will handle minecraft things sync
-                int taskID = scheduler.scheduleAsyncRepeatingTask(plugin, tasked, 1L, 1L);
-                tasked.setTaskID(taskID);
+                int taskID = scheduler.scheduleAsyncRepeatingTask(plugin, task, 1L, 1L);
+                task.setTaskID(taskID);
 
                 // Here we add the breaking to the tasks
                 ArrayList<MiningTask> list = new ArrayList<>();
@@ -199,7 +202,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                     list = miningTasks.get(player.getUniqueId());
                 }
 
-                list.add(tasked);
+                list.add(task);
                 miningTasks.put(player.getUniqueId(), list);
             }
 
@@ -270,12 +273,15 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 // Finally assign found task to our instanced task
                 MiningTask task = taskStream.get();
 
+                // Cancel mining task
                 scheduler.cancelTask(task.getTaskID());
                 list.remove(task);
                 if (list.isEmpty()) {
+                    // Their tasks now empty so remove
                     miningTasks.remove(player.getUniqueId());
-                    handler.sendBlockBreak(block, 10, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Arrays.asList(player));
+                    handler.sendBlockBreak(block, 10, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
                 } else {
+                    // Otherwise just update list with removed task
                     miningTasks.put(player.getUniqueId(), list);
                 }
             }
@@ -295,7 +301,9 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
 
         // Actually break the block
         block.breakNaturally(player.getInventory().getItemInMainHand());
-        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, Material.ANVIL);
+
+        // Block break effect
+        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType(), 1);
 
         // Force call block break event
         BlockBreakEvent blockBreak = new BlockBreakEvent(block, player);

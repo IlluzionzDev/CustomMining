@@ -57,4 +57,14 @@ public final class CustomMining extends IlluzionzPlugin {
     public List<Config> getExtraConfig() {
         return null;
     }
+
+    @Override
+    public String getPluginName() {
+        return "CustomMining";
+    }
+
+    @Override
+    public String getPluginVersion() {
+        return "1.0";
+    }
 }
