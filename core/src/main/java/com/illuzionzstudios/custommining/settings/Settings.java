@@ -42,7 +42,7 @@ public class Settings {
     public static final ConfigSetting LIQUID_MOD = new ConfigSetting(config, "Modifiers.Liquid", -5.0,
             "Controls the modifier on break speed when the player's head is underwater.",
             "Set to a double for percent increase, so 1.25, for a 25% increase",
-            "or 3, for a 300% increase. For a nerf set to \"-\", so -1.25 for a 25% decrease.",
+            "or 3, for a 200% increase. For a nerf set to \"-\", so -1.25 for a 25% decrease.",
             "Set to 1 to disable.");
 
     public static final ConfigSetting AIR_MOD = new ConfigSetting(config, "Modifiers.Air", -5.0,
