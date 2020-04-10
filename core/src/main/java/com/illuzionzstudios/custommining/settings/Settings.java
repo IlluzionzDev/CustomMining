@@ -56,16 +56,12 @@ public class Settings {
             "The language file to use for the plugin",
             "More language files (if available) can be found in the plugins locale folder.");
 
-    public static final ConfigSetting AUTOSAVE = new ConfigSetting(config, "System.Autosave Interval", 60,
-            "Seconds between autosaves and loading the updated config");
-
-
     /**
      * Setup the configuration
      */
     public static void loadSettings() {
         config.load();
-        config.setAutoremove(true).setAutosave(true).setAutosaveInterval(AUTOSAVE.getInt());
+        config.setAutoremove(true);
 
         config.saveChanges();
     }
