@@ -82,11 +82,6 @@ public class MiningTask implements Runnable {
      */
     @Override
     public void run() {
-        // If player can't trigger tasks, immediately pause the task
-        if (MiningController.INSTANCE.getDisabled().contains(player.getUniqueId())) {
-            return;
-        }
-
         ticks++;
         totalTicks++;
 
@@ -109,6 +104,12 @@ public class MiningTask implements Runnable {
         // and lag the server
         if (totalSeconds >= Settings.CLEANUP_THRESHOLD.getInt()) {
             MiningController.INSTANCE.cancelBreaking(block);
+            return;
+        }
+
+        // If player can't trigger tasks, immediately pause the task
+        // After cleanup checks
+        if (MiningController.INSTANCE.getDisabled().contains(player.getUniqueId())) {
             return;
         }
 

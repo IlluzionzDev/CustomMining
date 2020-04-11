@@ -1,12 +1,18 @@
 package com.illuzionzstudios.custommining;
 
 import net.minecraft.server.v1_15_R1.*;
+import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Copyright © 2020 Property of Illuzionz Studios, LLC
@@ -57,6 +63,18 @@ public class MiningHandler_1_15_R1 implements MiningHandler {
 
     @Override
     public void playBreakEffect(org.bukkit.block.Block block) {
+//        block.getWorld().spawnParticle(Particle.BLOCK_CRACK, block.getLocation().add(0.5, 0.5, 0.5),
+//                new Random().nextInt(20) + 10,
+//                0.25, 0.25, 0.25, Material.BEDROCK.createBlockData());
 
+        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType().createBlockData().getMaterial());
+        // Stupid spigot doesn't like variables
+        // and only likes explicit types
+        // Like wtf mojang
+//        switch (block.getType()) {
+//            case STONE:
+//                block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, Material.STONE);
+//                break;
+//        }
     }
 }
