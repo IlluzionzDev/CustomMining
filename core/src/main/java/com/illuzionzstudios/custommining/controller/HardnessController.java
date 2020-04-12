@@ -13,6 +13,7 @@ package com.illuzionzstudios.custommining.controller;
 import com.illuzionzstudios.compatibility.CompatibleMaterial;
 import com.illuzionzstudios.core.bukkit.controller.BukkitController;
 import com.illuzionzstudios.core.util.Logger;
+import com.illuzionzstudios.core.util.MathUtil;
 import com.illuzionzstudios.custommining.CustomMining;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -61,8 +62,22 @@ public enum HardnessController implements BukkitController<CustomMining> {
 //        Logger.debug(doesToolHelp(getHeldTool(player), block.getType(), player));
 
         // Hardness calculations
+        float hardness = MiningController.INSTANCE.handler.getDefaultBlockHardness(block);
 
-        return 20f;
+        // Base time in seconds based on if tool helps
+        float baseTime = doesToolHelp(getHeldTool(player), block.getType(), player) ?
+                (float) (hardness * 1.5) :
+                hardness * 5;
+
+        // Multipliers
+        baseTime /= getMultiplier(getTier(player), block.getType());
+
+        baseTime = MathUtil.round(baseTime, 2);
+
+        Logger.debug(baseTime);
+
+        // Change to ticks
+        return baseTime * 20;
     }
 
     /**
@@ -147,11 +162,17 @@ public enum HardnessController implements BukkitController<CustomMining> {
         // Now checks for legacy materials
         CompatibleMaterial type = CompatibleMaterial.getBlockMaterial(mat);
 
+        // Make sure type exists
+        if (type == null) {
+            return false;
+        }
+
         // Run various checks per tool
         // Currently a lot of legacy materials
         // since it covers most things
-        // TODO: Should change and account for older materials
-        if (tool == Tool.AXE) {
+        //
+        // Also can mine all wood things with hand
+        if (tool == Tool.AXE || tool == Tool.HAND) {
             // Axe blocks
             return type == COCOA ||
                     type == JACK_O_LANTERN ||

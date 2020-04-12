@@ -128,7 +128,7 @@ public class MiningTask implements Runnable {
         counter++;
 
         // Reached break time
-        if (counter == breakTime) {
+        if (counter >= breakTime) {
             // Handle breaking the block
             MinecraftScheduler.get().synchronize(() -> {
                 MiningController.INSTANCE.breakBlock(player, block);
