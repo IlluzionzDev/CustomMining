@@ -10,6 +10,7 @@ package com.illuzionzstudios.custommining.controller;
  * this statement.
  */
 
+import com.illuzionzstudios.compatibility.CompatibleMaterial;
 import com.illuzionzstudios.core.bukkit.controller.BukkitController;
 import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.custommining.CustomMining;
@@ -20,7 +21,8 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.tools.Tool;
 
-import static org.bukkit.Material.*;
+import static com.illuzionzstudios.compatibility.CompatibleMaterial.*;
+import static com.illuzionzstudios.compatibility.CompatibleMaterial.BLACK_SHULKER_BOX;
 
 /**
  * Control hardness of blocks, modifiers etc
@@ -66,10 +68,10 @@ public enum HardnessController implements BukkitController<CustomMining> {
      * For instance a pickaxe helps stone, and axe helps wood.
      *
      * @param tool Tool to test
-     * @param type The type of material being mined
+     * @param mat The type of material being mined
      * @return If this tool helps or not
      */
-    public boolean doesToolHelp(Tool tool, Material type, Player player) {
+    public boolean doesToolHelp(Tool tool, Material mat, Player player) {
         // Tier of tool
         ToolTier tier = getTier(player);
 
@@ -79,6 +81,10 @@ public enum HardnessController implements BukkitController<CustomMining> {
         // Set in a previous check to cut
         // down on repeating code
         boolean doesHelp = false;
+
+        // Get compatibility from material
+        // Now checks for legacy materials
+        CompatibleMaterial type = CompatibleMaterial.getBlockMaterial(mat);
 
         // Run various checks per tool
         // Currently a lot of legacy materials
@@ -263,6 +269,22 @@ public enum HardnessController implements BukkitController<CustomMining> {
                         type == PISTON_HEAD ||
 
                         type == SHULKER_BOX ||
+                        type == WHITE_SHULKER_BOX ||
+                        type == ORANGE_SHULKER_BOX ||
+                        type == PURPLE_SHULKER_BOX ||
+                        type == MAGENTA_SHULKER_BOX ||
+                        type == LIGHT_BLUE_SHULKER_BOX ||
+                        type == YELLOW_SHULKER_BOX ||
+                        type == LIME_SHULKER_BOX ||
+                        type == PINK_SHULKER_BOX ||
+                        type == GRAY_SHULKER_BOX ||
+                        type == LIGHT_GRAY_SHULKER_BOX ||
+                        type == CYAN_SHULKER_BOX ||
+                        type == BLUE_SHULKER_BOX ||
+                        type == BROWN_SHULKER_BOX ||
+                        type == GREEN_SHULKER_BOX ||
+                        type == RED_SHULKER_BOX ||
+                        type == BLACK_SHULKER_BOX ||
 
                         type == ACTIVATOR_RAIL ||
                         type == DETECTOR_RAIL ||
