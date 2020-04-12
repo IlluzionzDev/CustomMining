@@ -21,7 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import javax.tools.Tool;
 
 import static org.bukkit.Material.*;
-import static org.bukkit.Material.BLACK_WALL_BANNER;
 
 /**
  * Control hardness of blocks, modifiers etc
@@ -227,13 +226,6 @@ public enum HardnessController implements BukkitController<CustomMining> {
                     type == ACACIA_TRAPDOOR ||
                     type == DARK_OAK_TRAPDOOR ||
 
-                    type == OAK_TRAPDOOR ||
-                    type == SPRUCE_TRAPDOOR ||
-                    type == BIRCH_TRAPDOOR ||
-                    type == JUNGLE_TRAPDOOR ||
-                    type == ACACIA_TRAPDOOR ||
-                    type == DARK_OAK_TRAPDOOR ||
-
                     type == STRIPPED_OAK_WOOD ||
                     type == STRIPPED_OAK_LOG ||
                     type == STRIPPED_SPRUCE_WOOD ||
@@ -249,258 +241,8 @@ public enum HardnessController implements BukkitController<CustomMining> {
         } else if (tool == Tool.PICKAXE) {
             // Checks for each tier
             // include all blocks for that tier
-            if (tier.atLeast(ToolTier.DIAMOND)) {
-                return type == ICE ||
-                        type == PACKED_ICE ||
-                        type == BLUE_ICE ||
-                        type == FROSTED_ICE ||
-
-                        type == ANVIL ||
-                        type == REDSTONE_BLOCK ||
-                        type == BREWING_STAND ||
-                        type == CAULDRON ||
-                        type == IRON_BARS ||
-                        type == IRON_DOOR ||
-                        type == IRON_TRAPDOOR ||
-                        type == HOPPER ||
-                        type == HEAVY_WEIGHTED_PRESSURE_PLATE ||
-                        type == LIGHT_WEIGHTED_PRESSURE_PLATE ||
-
-                        type == IRON_BLOCK ||
-                        type == LAPIS_BLOCK ||
-
-                        type == DIAMOND_BLOCK ||
-                        type == EMERALD_BLOCK ||
-                        type == GOLD_BLOCK ||
-
-                        type == PISTON ||
-                        type == STICKY_PISTON ||
-                        type == PISTON_HEAD ||
-
-                        type == SHULKER_BOX ||
-
-                        type == ACTIVATOR_RAIL ||
-                        type == DETECTOR_RAIL ||
-                        type == POWERED_RAIL ||
-                        type == RAIL ||
-
-                        type == ANDESITE ||
-                        type == COAL_BLOCK ||
-                        type == QUARTZ_BLOCK ||
-                        type == QUARTZ_PILLAR ||
-                        type == QUARTZ_SLAB ||
-                        type == BRICKS ||
-                        type == BRICK_SLAB ||
-                        type == BRICK_STAIRS ||
-                        type == COAL_ORE ||
-                        type == COBBLESTONE ||
-                        type == COBBLESTONE_SLAB ||
-                        type == COBBLESTONE_STAIRS ||
-                        type == COBBLESTONE_WALL ||
-                        type == MOSSY_COBBLESTONE ||
-                        type == MOSSY_COBBLESTONE_SLAB ||
-                        type == MOSSY_COBBLESTONE_STAIRS ||
-                        type == MOSSY_COBBLESTONE_WALL ||
-                        type == LEGACY_CONCRETE ||
-                        type == DARK_PRISMARINE ||
-                        type == DARK_PRISMARINE_SLAB ||
-                        type == DARK_PRISMARINE_STAIRS ||
-                        type == DIORITE ||
-                        type == DIORITE_SLAB ||
-                        type == DIORITE_STAIRS ||
-                        type == DIORITE_WALL ||
-                        type == DISPENSER ||
-                        type == DROPPER ||
-                        type == ENCHANTING_TABLE ||
-                        type == END_STONE ||
-                        type == END_STONE_BRICKS ||
-                        type == END_STONE_BRICK_SLAB ||
-                        type == END_STONE_BRICK_STAIRS ||
-                        type == END_STONE_BRICK_WALL ||
-                        type == ENDER_CHEST ||
-                        type == FURNACE ||
-                        type == GRANITE ||
-                        type == GRANITE_SLAB ||
-                        type == GRANITE_STAIRS ||
-                        type == GRANITE_WALL ||
-                        type == NETHER_BRICKS ||
-                        type == NETHER_BRICK_SLAB ||
-                        type == NETHER_BRICK_STAIRS ||
-                        type == NETHER_BRICK_FENCE ||
-                        type == NETHER_QUARTZ_ORE ||
-                        type == NETHERRACK ||
-                        type == POLISHED_ANDESITE ||
-                        type == POLISHED_ANDESITE_SLAB ||
-                        type == POLISHED_ANDESITE_STAIRS ||
-                        type == PRISMARINE ||
-                        type == PRISMARINE_SLAB ||
-                        type == PRISMARINE_STAIRS ||
-                        type == PRISMARINE_BRICKS ||
-                        type == PRISMARINE_BRICK_SLAB ||
-                        type == PRISMARINE_BRICK_STAIRS ||
-                        type == POLISHED_DIORITE ||
-                        type == POLISHED_DIORITE_SLAB ||
-                        type == POLISHED_DIORITE_STAIRS ||
-                        type == POLISHED_GRANITE ||
-                        type == POLISHED_GRANITE_SLAB ||
-                        type == POLISHED_GRANITE_STAIRS ||
-                        type == RED_SANDSTONE ||
-                        type == RED_SANDSTONE_SLAB ||
-                        type == RED_SANDSTONE_STAIRS ||
-                        type == RED_SANDSTONE_WALL ||
-                        type == SANDSTONE ||
-                        type == SANDSTONE_STAIRS ||
-                        type == SANDSTONE_SLAB ||
-                        type == SANDSTONE_WALL ||
-                        type == SPAWNER ||
-                        type == SMOOTH_STONE ||
-                        type == SMOOTH_STONE_SLAB ||
-                        type == STONE ||
-                        type == STONE_SLAB ||
-                        type == STONE_STAIRS ||
-                        type == STONE_BRICKS ||
-                        type == STONE_BRICK_SLAB ||
-                        type == STONE_BRICK_STAIRS ||
-                        type == STONE_BRICK_WALL ||
-                        type == STONE_BUTTON ||
-                        type == STONE_PRESSURE_PLATE ||
-                        type == TERRACOTTA ||
-
-                        type == IRON_ORE ||
-                        type == LAPIS_ORE ||
-
-                        type == DIAMOND_ORE ||
-                        type == EMERALD_ORE ||
-                        type == GOLD_ORE ||
-                        type == REDSTONE_ORE ||
-
-                        type == OBSIDIAN;
-            } else if (tier.atLeast(ToolTier.IRON)) {
-                return type == ICE ||
-                        type == PACKED_ICE ||
-                        type == BLUE_ICE ||
-                        type == FROSTED_ICE ||
-
-                        type == ANVIL ||
-                        type == REDSTONE_BLOCK ||
-                        type == BREWING_STAND ||
-                        type == CAULDRON ||
-                        type == IRON_BARS ||
-                        type == IRON_DOOR ||
-                        type == IRON_TRAPDOOR ||
-                        type == HOPPER ||
-                        type == HEAVY_WEIGHTED_PRESSURE_PLATE ||
-                        type == LIGHT_WEIGHTED_PRESSURE_PLATE ||
-
-                        type == IRON_BLOCK ||
-                        type == LAPIS_BLOCK ||
-
-                        type == DIAMOND_BLOCK ||
-                        type == EMERALD_BLOCK ||
-                        type == GOLD_BLOCK ||
-
-                        type == PISTON ||
-                        type == STICKY_PISTON ||
-                        type == PISTON_HEAD ||
-
-                        type == SHULKER_BOX ||
-
-                        type == ACTIVATOR_RAIL ||
-                        type == DETECTOR_RAIL ||
-                        type == POWERED_RAIL ||
-                        type == RAIL ||
-
-                        type == ANDESITE ||
-                        type == COAL_BLOCK ||
-                        type == QUARTZ_BLOCK ||
-                        type == QUARTZ_PILLAR ||
-                        type == QUARTZ_SLAB ||
-                        type == BRICKS ||
-                        type == BRICK_SLAB ||
-                        type == BRICK_STAIRS ||
-                        type == COAL_ORE ||
-                        type == COBBLESTONE ||
-                        type == COBBLESTONE_SLAB ||
-                        type == COBBLESTONE_STAIRS ||
-                        type == COBBLESTONE_WALL ||
-                        type == MOSSY_COBBLESTONE ||
-                        type == MOSSY_COBBLESTONE_SLAB ||
-                        type == MOSSY_COBBLESTONE_STAIRS ||
-                        type == MOSSY_COBBLESTONE_WALL ||
-                        type == LEGACY_CONCRETE ||
-                        type == DARK_PRISMARINE ||
-                        type == DARK_PRISMARINE_SLAB ||
-                        type == DARK_PRISMARINE_STAIRS ||
-                        type == DIORITE ||
-                        type == DIORITE_SLAB ||
-                        type == DIORITE_STAIRS ||
-                        type == DIORITE_WALL ||
-                        type == DISPENSER ||
-                        type == DROPPER ||
-                        type == ENCHANTING_TABLE ||
-                        type == END_STONE ||
-                        type == END_STONE_BRICKS ||
-                        type == END_STONE_BRICK_SLAB ||
-                        type == END_STONE_BRICK_STAIRS ||
-                        type == END_STONE_BRICK_WALL ||
-                        type == ENDER_CHEST ||
-                        type == FURNACE ||
-                        type == GRANITE ||
-                        type == GRANITE_SLAB ||
-                        type == GRANITE_STAIRS ||
-                        type == GRANITE_WALL ||
-                        type == NETHER_BRICKS ||
-                        type == NETHER_BRICK_SLAB ||
-                        type == NETHER_BRICK_STAIRS ||
-                        type == NETHER_BRICK_FENCE ||
-                        type == NETHER_QUARTZ_ORE ||
-                        type == NETHERRACK ||
-                        type == POLISHED_ANDESITE ||
-                        type == POLISHED_ANDESITE_SLAB ||
-                        type == POLISHED_ANDESITE_STAIRS ||
-                        type == PRISMARINE ||
-                        type == PRISMARINE_SLAB ||
-                        type == PRISMARINE_STAIRS ||
-                        type == PRISMARINE_BRICKS ||
-                        type == PRISMARINE_BRICK_SLAB ||
-                        type == PRISMARINE_BRICK_STAIRS ||
-                        type == POLISHED_DIORITE ||
-                        type == POLISHED_DIORITE_SLAB ||
-                        type == POLISHED_DIORITE_STAIRS ||
-                        type == POLISHED_GRANITE ||
-                        type == POLISHED_GRANITE_SLAB ||
-                        type == POLISHED_GRANITE_STAIRS ||
-                        type == RED_SANDSTONE ||
-                        type == RED_SANDSTONE_SLAB ||
-                        type == RED_SANDSTONE_STAIRS ||
-                        type == RED_SANDSTONE_WALL ||
-                        type == SANDSTONE ||
-                        type == SANDSTONE_STAIRS ||
-                        type == SANDSTONE_SLAB ||
-                        type == SANDSTONE_WALL ||
-                        type == SPAWNER ||
-                        type == SMOOTH_STONE ||
-                        type == SMOOTH_STONE_SLAB ||
-                        type == STONE ||
-                        type == STONE_SLAB ||
-                        type == STONE_STAIRS ||
-                        type == STONE_BRICKS ||
-                        type == STONE_BRICK_SLAB ||
-                        type == STONE_BRICK_STAIRS ||
-                        type == STONE_BRICK_WALL ||
-                        type == STONE_BUTTON ||
-                        type == STONE_PRESSURE_PLATE ||
-                        type == TERRACOTTA ||
-
-                        type == IRON_ORE ||
-                        type == LAPIS_ORE ||
-
-                        type == DIAMOND_ORE ||
-                        type == EMERALD_ORE ||
-                        type == GOLD_ORE ||
-                        type == REDSTONE_ORE;
-            } else if (tier.atLeast(ToolTier.STONE)) {
-                return type == ICE ||
+            if (tier.atLeast(ToolTier.WOOD)) {
+                doesHelp = type == ICE ||
                         type == PACKED_ICE ||
                         type == BLUE_ICE ||
                         type == FROSTED_ICE ||
@@ -544,122 +286,24 @@ public enum HardnessController implements BukkitController<CustomMining> {
                         type == MOSSY_COBBLESTONE_SLAB ||
                         type == MOSSY_COBBLESTONE_STAIRS ||
                         type == MOSSY_COBBLESTONE_WALL ||
-                        type == LEGACY_CONCRETE ||
-                        type == DARK_PRISMARINE ||
-                        type == DARK_PRISMARINE_SLAB ||
-                        type == DARK_PRISMARINE_STAIRS ||
-                        type == DIORITE ||
-                        type == DIORITE_SLAB ||
-                        type == DIORITE_STAIRS ||
-                        type == DIORITE_WALL ||
-                        type == DISPENSER ||
-                        type == DROPPER ||
-                        type == ENCHANTING_TABLE ||
-                        type == END_STONE ||
-                        type == END_STONE_BRICKS ||
-                        type == END_STONE_BRICK_SLAB ||
-                        type == END_STONE_BRICK_STAIRS ||
-                        type == END_STONE_BRICK_WALL ||
-                        type == ENDER_CHEST ||
-                        type == FURNACE ||
-                        type == GRANITE ||
-                        type == GRANITE_SLAB ||
-                        type == GRANITE_STAIRS ||
-                        type == GRANITE_WALL ||
-                        type == NETHER_BRICKS ||
-                        type == NETHER_BRICK_SLAB ||
-                        type == NETHER_BRICK_STAIRS ||
-                        type == NETHER_BRICK_FENCE ||
-                        type == NETHER_QUARTZ_ORE ||
-                        type == NETHERRACK ||
-                        type == POLISHED_ANDESITE ||
-                        type == POLISHED_ANDESITE_SLAB ||
-                        type == POLISHED_ANDESITE_STAIRS ||
-                        type == PRISMARINE ||
-                        type == PRISMARINE_SLAB ||
-                        type == PRISMARINE_STAIRS ||
-                        type == PRISMARINE_BRICKS ||
-                        type == PRISMARINE_BRICK_SLAB ||
-                        type == PRISMARINE_BRICK_STAIRS ||
-                        type == POLISHED_DIORITE ||
-                        type == POLISHED_DIORITE_SLAB ||
-                        type == POLISHED_DIORITE_STAIRS ||
-                        type == POLISHED_GRANITE ||
-                        type == POLISHED_GRANITE_SLAB ||
-                        type == POLISHED_GRANITE_STAIRS ||
-                        type == RED_SANDSTONE ||
-                        type == RED_SANDSTONE_SLAB ||
-                        type == RED_SANDSTONE_STAIRS ||
-                        type == RED_SANDSTONE_WALL ||
-                        type == SANDSTONE ||
-                        type == SANDSTONE_STAIRS ||
-                        type == SANDSTONE_SLAB ||
-                        type == SANDSTONE_WALL ||
-                        type == SPAWNER ||
-                        type == SMOOTH_STONE ||
-                        type == SMOOTH_STONE_SLAB ||
-                        type == STONE ||
-                        type == STONE_SLAB ||
-                        type == STONE_STAIRS ||
-                        type == STONE_BRICKS ||
-                        type == STONE_BRICK_SLAB ||
-                        type == STONE_BRICK_STAIRS ||
-                        type == STONE_BRICK_WALL ||
-                        type == STONE_BUTTON ||
-                        type == STONE_PRESSURE_PLATE ||
-                        type == TERRACOTTA ||
 
-                        type == IRON_BLOCK ||
-                        type == LAPIS_BLOCK ||
+                        type == WHITE_CONCRETE ||
+                        type == ORANGE_CONCRETE ||
+                        type == PURPLE_CONCRETE ||
+                        type == MAGENTA_CONCRETE ||
+                        type == LIGHT_BLUE_CONCRETE ||
+                        type == YELLOW_CONCRETE ||
+                        type == LIME_CONCRETE ||
+                        type == PINK_CONCRETE ||
+                        type == GRAY_CONCRETE ||
+                        type == LIGHT_GRAY_CONCRETE ||
+                        type == CYAN_CONCRETE ||
+                        type == BLUE_CONCRETE ||
+                        type == BROWN_CONCRETE ||
+                        type == GREEN_CONCRETE ||
+                        type == RED_CONCRETE ||
+                        type == BLACK_CONCRETE ||
 
-                        type == IRON_ORE ||
-                        type == LAPIS_ORE;
-            } else if (tier.atLeast(ToolTier.WOOD)) {
-                return type == ICE ||
-                        type == PACKED_ICE ||
-                        type == BLUE_ICE ||
-                        type == FROSTED_ICE ||
-
-                        type == ANVIL ||
-                        type == REDSTONE_BLOCK ||
-                        type == BREWING_STAND ||
-                        type == CAULDRON ||
-                        type == IRON_BARS ||
-                        type == IRON_DOOR ||
-                        type == IRON_TRAPDOOR ||
-                        type == HOPPER ||
-                        type == HEAVY_WEIGHTED_PRESSURE_PLATE ||
-                        type == LIGHT_WEIGHTED_PRESSURE_PLATE ||
-
-                        type == PISTON ||
-                        type == STICKY_PISTON ||
-                        type == PISTON_HEAD ||
-
-                        type == SHULKER_BOX ||
-
-                        type == ACTIVATOR_RAIL ||
-                        type == DETECTOR_RAIL ||
-                        type == POWERED_RAIL ||
-                        type == RAIL ||
-
-                        type == ANDESITE ||
-                        type == COAL_BLOCK ||
-                        type == QUARTZ_BLOCK ||
-                        type == QUARTZ_PILLAR ||
-                        type == QUARTZ_SLAB ||
-                        type == BRICKS ||
-                        type == BRICK_SLAB ||
-                        type == BRICK_STAIRS ||
-                        type == COAL_ORE ||
-                        type == COBBLESTONE ||
-                        type == COBBLESTONE_SLAB ||
-                        type == COBBLESTONE_STAIRS ||
-                        type == COBBLESTONE_WALL ||
-                        type == MOSSY_COBBLESTONE ||
-                        type == MOSSY_COBBLESTONE_SLAB ||
-                        type == MOSSY_COBBLESTONE_STAIRS ||
-                        type == MOSSY_COBBLESTONE_WALL ||
-                        type == LEGACY_CONCRETE ||
                         type == DARK_PRISMARINE ||
                         type == DARK_PRISMARINE_SLAB ||
                         type == DARK_PRISMARINE_STAIRS ||
@@ -724,16 +368,74 @@ public enum HardnessController implements BukkitController<CustomMining> {
                         type == STONE_PRESSURE_PLATE ||
                         type == TERRACOTTA;
             }
+            if (tier.atLeast(ToolTier.STONE)) {
+                doesHelp = type == IRON_BLOCK ||
+                        type == LAPIS_BLOCK ||
 
+                        type == IRON_ORE ||
+                        type == LAPIS_ORE || doesHelp;
+            }
+            if (tier.atLeast(ToolTier.IRON)) {
+                doesHelp = type == DIAMOND_BLOCK ||
+                        type == EMERALD_BLOCK ||
+                        type == GOLD_BLOCK ||
+
+                        type == DIAMOND_ORE ||
+                        type == EMERALD_ORE ||
+                        type == GOLD_ORE ||
+                        type == REDSTONE_ORE || doesHelp;
+            }
+            if (tier.atLeast(ToolTier.DIAMOND)) {
+                doesHelp = type == OBSIDIAN || doesHelp;
+            }
+
+            // Finally return if does now help
+            return doesHelp;
         } else if (tool == Tool.SHEARS) {
-            return type == LEGACY_LEAVES ||
-                    type == LEGACY_LEAVES_2 ||
+            return type == OAK_LEAVES ||
+                    type == SPRUCE_LEAVES ||
+                    type == BIRCH_LEAVES ||
+                    type == JUNGLE_LEAVES ||
+                    type == ACACIA_LEAVES ||
+                    type == DARK_OAK_LEAVES ||
+
                     type == COBWEB ||
-                    type == LEGACY_WOOL;
+
+                    type == WHITE_WOOL ||
+                    type == ORANGE_WOOL ||
+                    type == PURPLE_WOOL ||
+                    type == MAGENTA_WOOL ||
+                    type == LIGHT_BLUE_WOOL ||
+                    type == YELLOW_WOOL ||
+                    type == LIME_WOOL ||
+                    type == PINK_WOOL ||
+                    type == GRAY_WOOL ||
+                    type == LIGHT_GRAY_WOOL ||
+                    type == CYAN_WOOL ||
+                    type == BLUE_WOOL ||
+                    type == BROWN_WOOL ||
+                    type == GREEN_WOOL ||
+                    type == RED_WOOL ||
+                    type == BLACK_WOOL;
         } else if (tool == Tool.SHOVEL) {
             return type == CLAY ||
                     type == COARSE_DIRT ||
-                    type == LEGACY_CONCRETE_POWDER ||
+                    type == WHITE_CONCRETE_POWDER ||
+                    type == ORANGE_CONCRETE_POWDER ||
+                    type == PURPLE_CONCRETE_POWDER ||
+                    type == MAGENTA_CONCRETE_POWDER ||
+                    type == LIGHT_BLUE_CONCRETE_POWDER ||
+                    type == YELLOW_CONCRETE_POWDER ||
+                    type == LIME_CONCRETE_POWDER ||
+                    type == PINK_CONCRETE_POWDER ||
+                    type == GRAY_CONCRETE_POWDER ||
+                    type == LIGHT_GRAY_CONCRETE_POWDER ||
+                    type == CYAN_CONCRETE_POWDER ||
+                    type == BLUE_CONCRETE_POWDER ||
+                    type == BROWN_CONCRETE_POWDER ||
+                    type == GREEN_CONCRETE_POWDER ||
+                    type == RED_CONCRETE_POWDER ||
+                    type == BLACK_CONCRETE_POWDER ||
                     type == DIRT ||
                     type == FARMLAND ||
                     type == GRASS_BLOCK ||
