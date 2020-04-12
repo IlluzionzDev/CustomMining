@@ -58,9 +58,70 @@ public enum HardnessController implements BukkitController<CustomMining> {
      * @return Break time in ticks
      */
     public float processFinalBreakTime(Block block, Player player) {
-        Logger.debug(doesToolHelp(getHeldTool(player), block.getType(), player));
+//        Logger.debug(doesToolHelp(getHeldTool(player), block.getType(), player));
+
+        // Hardness calculations
 
         return 20f;
+    }
+
+    /**
+     * Get the breaking multiplier for a tool tier
+     *
+     * @param tier Tier to get multiplier for
+     * @return Multiplier as float
+     */
+    public float getMultiplier(ToolTier tier, Material mat) {
+        // Get compatibility from material
+        // Now checks for legacy materials
+        CompatibleMaterial type = CompatibleMaterial.getBlockMaterial(mat);
+
+        switch (tier) {
+            case NONE:
+                return 1;
+            case WOOD:
+                return 2;
+            case STONE:
+                return 4;
+            case IRON:
+                return 6;
+            case DIAMOND:
+                return 8;
+            case GOLD:
+                return 12;
+            case SHEARS:
+                // Extra material checks
+                if (type == OAK_LEAVES ||
+                    type == SPRUCE_LEAVES ||
+                    type == BIRCH_LEAVES ||
+                    type == JUNGLE_LEAVES ||
+                    type == ACACIA_LEAVES ||
+                    type == DARK_OAK_LEAVES ||
+                    type == COBWEB) return 15;
+
+                    if (type == WHITE_WOOL ||
+                    type == ORANGE_WOOL ||
+                    type == PURPLE_WOOL ||
+                    type == MAGENTA_WOOL ||
+                    type == LIGHT_BLUE_WOOL ||
+                    type == YELLOW_WOOL ||
+                    type == LIME_WOOL ||
+                    type == PINK_WOOL ||
+                    type == GRAY_WOOL ||
+                    type == LIGHT_GRAY_WOOL ||
+                    type == CYAN_WOOL ||
+                    type == BLUE_WOOL ||
+                    type == BROWN_WOOL ||
+                    type == GREEN_WOOL ||
+                    type == RED_WOOL ||
+                    type == BLACK_WOOL) return 5;
+                    return 1.5f;
+            case SWORD:
+                if (type == COBWEB) return 15;
+                return 1.5f;
+        }
+
+        return 1;
     }
 
     /**
@@ -541,6 +602,8 @@ public enum HardnessController implements BukkitController<CustomMining> {
             return ToolTier.GOLD;
         } else if (name.startsWith("SHEARS")) {
             return ToolTier.SHEARS;
+        } else if (name.endsWith("SWORD")) {
+            return ToolTier.SWORD;
         }
 
         // Default no tier
@@ -559,7 +622,7 @@ public enum HardnessController implements BukkitController<CustomMining> {
      * etc WOODEN, DIAMOND, SHEARS etc
      */
     public enum ToolTier {
-        WOOD, GOLD, STONE, IRON, DIAMOND, SHEARS, NONE;
+        WOOD, GOLD, STONE, IRON, DIAMOND, SHEARS, SWORD, NONE;
 
         /**
          * @param tier Check if this tier is at least
