@@ -20,10 +20,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import javax.tools.Tool;
-
 import static com.illuzionzstudios.compatibility.CompatibleMaterial.*;
-import static com.illuzionzstudios.compatibility.CompatibleMaterial.BLACK_SHULKER_BOX;
 
 /**
  * Control hardness of blocks, modifiers etc
@@ -59,7 +56,7 @@ public enum HardnessController implements BukkitController<CustomMining> {
      * @return Break time in ticks
      */
     public float processFinalBreakTime(Block block, Player player) {
-//        Logger.debug(doesToolHelp(getHeldTool(player), block.getType(), player));
+        Logger.debug(doesToolHelp(getHeldTool(player), block.getType(), player));
 
         // Hardness calculations
         float hardness = MiningController.INSTANCE.handler.getDefaultBlockHardness(block);
@@ -70,7 +67,8 @@ public enum HardnessController implements BukkitController<CustomMining> {
                 hardness * 5;
 
         // Multipliers
-        baseTime /= getMultiplier(getTier(player), block.getType());
+        if (doesToolMultiply(getHeldTool(player), block.getType(), player))
+            baseTime /= getMultiplier(getTier(player), block.getType());
 
         baseTime = MathUtil.round(baseTime, 2);
 
@@ -107,30 +105,30 @@ public enum HardnessController implements BukkitController<CustomMining> {
             case SHEARS:
                 // Extra material checks
                 if (type == OAK_LEAVES ||
-                    type == SPRUCE_LEAVES ||
-                    type == BIRCH_LEAVES ||
-                    type == JUNGLE_LEAVES ||
-                    type == ACACIA_LEAVES ||
-                    type == DARK_OAK_LEAVES ||
-                    type == COBWEB) return 15;
+                        type == SPRUCE_LEAVES ||
+                        type == BIRCH_LEAVES ||
+                        type == JUNGLE_LEAVES ||
+                        type == ACACIA_LEAVES ||
+                        type == DARK_OAK_LEAVES ||
+                        type == COBWEB) return 15;
 
-                    if (type == WHITE_WOOL ||
-                    type == ORANGE_WOOL ||
-                    type == PURPLE_WOOL ||
-                    type == MAGENTA_WOOL ||
-                    type == LIGHT_BLUE_WOOL ||
-                    type == YELLOW_WOOL ||
-                    type == LIME_WOOL ||
-                    type == PINK_WOOL ||
-                    type == GRAY_WOOL ||
-                    type == LIGHT_GRAY_WOOL ||
-                    type == CYAN_WOOL ||
-                    type == BLUE_WOOL ||
-                    type == BROWN_WOOL ||
-                    type == GREEN_WOOL ||
-                    type == RED_WOOL ||
-                    type == BLACK_WOOL) return 5;
-                    return 1.5f;
+                if (type == WHITE_WOOL ||
+                        type == ORANGE_WOOL ||
+                        type == PURPLE_WOOL ||
+                        type == MAGENTA_WOOL ||
+                        type == LIGHT_BLUE_WOOL ||
+                        type == YELLOW_WOOL ||
+                        type == LIME_WOOL ||
+                        type == PINK_WOOL ||
+                        type == GRAY_WOOL ||
+                        type == LIGHT_GRAY_WOOL ||
+                        type == CYAN_WOOL ||
+                        type == BLUE_WOOL ||
+                        type == BROWN_WOOL ||
+                        type == GREEN_WOOL ||
+                        type == RED_WOOL ||
+                        type == BLACK_WOOL) return 5;
+                return 1.5f;
             case SWORD:
                 if (type == COBWEB) return 15;
                 return 1.5f;
@@ -144,15 +142,12 @@ public enum HardnessController implements BukkitController<CustomMining> {
      * For instance a pickaxe helps stone, and axe helps wood.
      *
      * @param tool Tool to test
-     * @param mat The type of material being mined
+     * @param mat  The type of material being mined
      * @return If this tool helps or not
      */
     public boolean doesToolHelp(Tool tool, Material mat, Player player) {
         // Tier of tool
         ToolTier tier = getTier(player);
-
-        // No tool so doesn't help
-        if (tier == ToolTier.NONE) return false;
 
         // Set in a previous check to cut
         // down on repeating code
@@ -167,12 +162,249 @@ public enum HardnessController implements BukkitController<CustomMining> {
             return false;
         }
 
+        // Things that can be mined by hand
+        // Returned by default if no other tool
+        boolean master =  type == CLAY ||
+                type == COARSE_DIRT ||
+                type == WHITE_CONCRETE_POWDER ||
+                type == ORANGE_CONCRETE_POWDER ||
+                type == PURPLE_CONCRETE_POWDER ||
+                type == MAGENTA_CONCRETE_POWDER ||
+                type == LIGHT_BLUE_CONCRETE_POWDER ||
+                type == YELLOW_CONCRETE_POWDER ||
+                type == LIME_CONCRETE_POWDER ||
+                type == PINK_CONCRETE_POWDER ||
+                type == GRAY_CONCRETE_POWDER ||
+                type == LIGHT_GRAY_CONCRETE_POWDER ||
+                type == CYAN_CONCRETE_POWDER ||
+                type == BLUE_CONCRETE_POWDER ||
+                type == BROWN_CONCRETE_POWDER ||
+                type == GREEN_CONCRETE_POWDER ||
+                type == RED_CONCRETE_POWDER ||
+                type == BLACK_CONCRETE_POWDER ||
+                type == DIRT ||
+                type == FARMLAND ||
+                type == GRASS_BLOCK ||
+                type == GRAVEL ||
+                type == MYCELIUM ||
+                type == PODZOL ||
+                type == RED_SAND ||
+                type == SAND ||
+                type == SOUL_SAND ||
+                type == SNOW_BLOCK ||
+                type == SNOW ||
+
+                type == OAK_LEAVES ||
+                type == SPRUCE_LEAVES ||
+                type == BIRCH_LEAVES ||
+                type == JUNGLE_LEAVES ||
+                type == ACACIA_LEAVES ||
+                type == DARK_OAK_LEAVES ||
+
+                type == COCOA ||
+                type == JACK_O_LANTERN ||
+                type == PUMPKIN ||
+                type == VINE ||
+                type == MELON ||
+                type == BEE_NEST ||
+
+                type == WHITE_BED ||
+                type == ORANGE_BED ||
+                type == PURPLE_BED ||
+                type == MAGENTA_BED ||
+                type == LIGHT_BLUE_BED ||
+                type == YELLOW_BED ||
+                type == LIME_BED ||
+                type == PINK_BED ||
+                type == GRAY_BED ||
+                type == LIGHT_GRAY_BED ||
+                type == CYAN_BED ||
+                type == BLUE_BED ||
+                type == BROWN_BED ||
+                type == GREEN_BED ||
+                type == RED_BED ||
+                type == BLACK_BED ||
+
+                type == WHITE_CARPET ||
+                type == ORANGE_CARPET ||
+                type == PURPLE_CARPET ||
+                type == MAGENTA_CARPET ||
+                type == LIGHT_BLUE_CARPET ||
+                type == YELLOW_CARPET ||
+                type == LIME_CARPET ||
+                type == PINK_CARPET ||
+                type == GRAY_CARPET ||
+                type == LIGHT_GRAY_CARPET ||
+                type == CYAN_CARPET ||
+                type == BLUE_CARPET ||
+                type == BROWN_CARPET ||
+                type == GREEN_CARPET ||
+                type == RED_CARPET ||
+                type == BLACK_CARPET ||
+
+                type == SPONGE ||
+                type == WET_SPONGE ||
+                type == CAKE ||
+                type == DRAGON_EGG ||
+                type == PLAYER_HEAD ||
+                type == CREEPER_HEAD ||
+                type == ZOMBIE_HEAD ||
+                type == PLAYER_WALL_HEAD ||
+                type == CREEPER_WALL_HEAD ||
+                type == ZOMBIE_WALL_HEAD ||
+
+                type == WHITE_BANNER ||
+                type == ORANGE_BANNER ||
+                type == PURPLE_BANNER ||
+                type == MAGENTA_BANNER ||
+                type == LIGHT_BLUE_BANNER ||
+                type == YELLOW_BANNER ||
+                type == LIME_BANNER ||
+                type == PINK_BANNER ||
+                type == GRAY_BANNER ||
+                type == LIGHT_GRAY_BANNER ||
+                type == CYAN_BANNER ||
+                type == BLUE_BANNER ||
+                type == BROWN_BANNER ||
+                type == GREEN_BANNER ||
+                type == RED_BANNER ||
+                type == BLACK_BANNER ||
+
+                type == WHITE_WALL_BANNER ||
+                type == ORANGE_WALL_BANNER ||
+                type == PURPLE_WALL_BANNER ||
+                type == MAGENTA_WALL_BANNER ||
+                type == LIGHT_BLUE_WALL_BANNER ||
+                type == YELLOW_WALL_BANNER ||
+                type == LIME_WALL_BANNER ||
+                type == PINK_WALL_BANNER ||
+                type == GRAY_WALL_BANNER ||
+                type == LIGHT_GRAY_WALL_BANNER ||
+                type == CYAN_WALL_BANNER ||
+                type == BLUE_WALL_BANNER ||
+                type == BROWN_WALL_BANNER ||
+                type == GREEN_WALL_BANNER ||
+                type == RED_WALL_BANNER ||
+                type == BLACK_WALL_BANNER ||
+
+                type == BOOKSHELF ||
+                type == CHEST ||
+                type == BEEHIVE ||
+                type == CRAFTING_TABLE ||
+                type == DAYLIGHT_DETECTOR ||
+                type == OAK_FENCE ||
+                type == SPRUCE_FENCE ||
+                type == BIRCH_FENCE ||
+                type == JUNGLE_FENCE ||
+                type == ACACIA_FENCE ||
+                type == DARK_OAK_FENCE ||
+                type == OAK_FENCE_GATE ||
+                type == SPRUCE_FENCE_GATE ||
+                type == BIRCH_FENCE_GATE ||
+                type == JUNGLE_FENCE_GATE ||
+                type == ACACIA_FENCE_GATE ||
+                type == DARK_OAK_FENCE_GATE ||
+                type == RED_MUSHROOM_BLOCK ||
+                type == BROWN_MUSHROOM_BLOCK ||
+                type == JUKEBOX ||
+                type == LADDER ||
+                type == NOTE_BLOCK ||
+                type == OAK_SIGN ||
+                type == SPRUCE_SIGN ||
+                type == BIRCH_SIGN ||
+                type == JUNGLE_SIGN ||
+                type == ACACIA_SIGN ||
+                type == DARK_OAK_SIGN ||
+                type == OAK_WALL_SIGN ||
+                type == SPRUCE_WALL_SIGN ||
+                type == BIRCH_WALL_SIGN ||
+                type == JUNGLE_WALL_SIGN ||
+                type == ACACIA_WALL_SIGN ||
+                type == DARK_OAK_WALL_SIGN ||
+                type == TRAPPED_CHEST ||
+
+                type == OAK_WOOD ||
+                type == SPRUCE_WOOD ||
+                type == BIRCH_WOOD ||
+                type == JUNGLE_WOOD ||
+                type == ACACIA_WOOD ||
+                type == DARK_OAK_WOOD ||
+
+                type == OAK_LOG ||
+                type == SPRUCE_LOG ||
+                type == BIRCH_LOG ||
+                type == JUNGLE_LOG ||
+                type == ACACIA_LOG ||
+                type == DARK_OAK_LOG ||
+
+                type == OAK_PLANKS ||
+                type == SPRUCE_PLANKS ||
+                type == BIRCH_PLANKS ||
+                type == JUNGLE_PLANKS ||
+                type == ACACIA_PLANKS ||
+                type == DARK_OAK_PLANKS ||
+
+                type == OAK_BUTTON ||
+                type == SPRUCE_BUTTON ||
+                type == BIRCH_BUTTON ||
+                type == JUNGLE_BUTTON ||
+                type == ACACIA_BUTTON ||
+                type == DARK_OAK_BUTTON ||
+
+                type == OAK_DOOR ||
+                type == SPRUCE_DOOR ||
+                type == BIRCH_DOOR ||
+                type == JUNGLE_DOOR ||
+                type == ACACIA_DOOR ||
+                type == DARK_OAK_DOOR ||
+
+                type == OAK_PRESSURE_PLATE ||
+                type == SPRUCE_PRESSURE_PLATE ||
+                type == BIRCH_PRESSURE_PLATE ||
+                type == JUNGLE_PRESSURE_PLATE ||
+                type == ACACIA_PRESSURE_PLATE ||
+                type == DARK_OAK_PRESSURE_PLATE ||
+
+                type == OAK_SLAB ||
+                type == SPRUCE_SLAB ||
+                type == BIRCH_SLAB ||
+                type == JUNGLE_SLAB ||
+                type == ACACIA_SLAB ||
+                type == DARK_OAK_SLAB ||
+
+                type == OAK_STAIRS ||
+                type == SPRUCE_STAIRS ||
+                type == BIRCH_STAIRS ||
+                type == JUNGLE_STAIRS ||
+                type == ACACIA_STAIRS ||
+                type == DARK_OAK_STAIRS ||
+
+                type == OAK_TRAPDOOR ||
+                type == SPRUCE_TRAPDOOR ||
+                type == BIRCH_TRAPDOOR ||
+                type == JUNGLE_TRAPDOOR ||
+                type == ACACIA_TRAPDOOR ||
+                type == DARK_OAK_TRAPDOOR ||
+
+                type == STRIPPED_OAK_WOOD ||
+                type == STRIPPED_OAK_LOG ||
+                type == STRIPPED_SPRUCE_WOOD ||
+                type == STRIPPED_SPRUCE_LOG ||
+                type == STRIPPED_BIRCH_WOOD ||
+                type == STRIPPED_BIRCH_LOG ||
+                type == STRIPPED_JUNGLE_WOOD ||
+                type == STRIPPED_JUNGLE_LOG ||
+                type == STRIPPED_ACACIA_WOOD ||
+                type == STRIPPED_ACACIA_LOG ||
+                type == STRIPPED_DARK_OAK_WOOD ||
+                type == STRIPPED_DARK_OAK_LOG;
+
         // Run various checks per tool
         // Currently a lot of legacy materials
         // since it covers most things
         //
         // Also can mine all wood things with hand
-        if (tool == Tool.AXE || tool == Tool.HAND) {
+        if (tool == Tool.AXE) {
             // Axe blocks
             return type == COCOA ||
                     type == JACK_O_LANTERN ||
@@ -325,7 +557,7 @@ public enum HardnessController implements BukkitController<CustomMining> {
                     type == STRIPPED_ACACIA_WOOD ||
                     type == STRIPPED_ACACIA_LOG ||
                     type == STRIPPED_DARK_OAK_WOOD ||
-                    type == STRIPPED_DARK_OAK_LOG;
+                    type == STRIPPED_DARK_OAK_LOG || master;
         } else if (tool == Tool.PICKAXE) {
             // Checks for each tier
             // include all blocks for that tier
@@ -494,7 +726,419 @@ public enum HardnessController implements BukkitController<CustomMining> {
             }
 
             // Finally return if does now help
-            return doesHelp;
+            return doesHelp || master;
+        } else if (tool == Tool.SHEARS) {
+            return type == OAK_LEAVES ||
+                    type == SPRUCE_LEAVES ||
+                    type == BIRCH_LEAVES ||
+                    type == JUNGLE_LEAVES ||
+                    type == ACACIA_LEAVES ||
+                    type == DARK_OAK_LEAVES ||
+
+                    type == COBWEB ||
+
+                    type == WHITE_WOOL ||
+                    type == ORANGE_WOOL ||
+                    type == PURPLE_WOOL ||
+                    type == MAGENTA_WOOL ||
+                    type == LIGHT_BLUE_WOOL ||
+                    type == YELLOW_WOOL ||
+                    type == LIME_WOOL ||
+                    type == PINK_WOOL ||
+                    type == GRAY_WOOL ||
+                    type == LIGHT_GRAY_WOOL ||
+                    type == CYAN_WOOL ||
+                    type == BLUE_WOOL ||
+                    type == BROWN_WOOL ||
+                    type == GREEN_WOOL ||
+                    type == RED_WOOL ||
+                    type == BLACK_WOOL || master;
+            // All things mined with shovel can be mined
+            // with their hand
+        } else if (tool == Tool.SHOVEL) {
+            return type == CLAY ||
+                    type == COARSE_DIRT ||
+                    type == WHITE_CONCRETE_POWDER ||
+                    type == ORANGE_CONCRETE_POWDER ||
+                    type == PURPLE_CONCRETE_POWDER ||
+                    type == MAGENTA_CONCRETE_POWDER ||
+                    type == LIGHT_BLUE_CONCRETE_POWDER ||
+                    type == YELLOW_CONCRETE_POWDER ||
+                    type == LIME_CONCRETE_POWDER ||
+                    type == PINK_CONCRETE_POWDER ||
+                    type == GRAY_CONCRETE_POWDER ||
+                    type == LIGHT_GRAY_CONCRETE_POWDER ||
+                    type == CYAN_CONCRETE_POWDER ||
+                    type == BLUE_CONCRETE_POWDER ||
+                    type == BROWN_CONCRETE_POWDER ||
+                    type == GREEN_CONCRETE_POWDER ||
+                    type == RED_CONCRETE_POWDER ||
+                    type == BLACK_CONCRETE_POWDER ||
+                    type == DIRT ||
+                    type == FARMLAND ||
+                    type == GRASS_BLOCK ||
+                    type == GRAVEL ||
+                    type == MYCELIUM ||
+                    type == PODZOL ||
+                    type == RED_SAND ||
+                    type == SAND ||
+                    type == SOUL_SAND ||
+                    type == SNOW_BLOCK ||
+                    type == SNOW || master;
+        } else if (tool == Tool.SWORD) {
+            return type == COBWEB ||
+                    type == BAMBOO ||
+                    type == BAMBOO_SAPLING || master;
+        }
+
+        return master;
+    }
+
+    /**
+     * This tests if a tool can be used to benefit mining.
+     * For instance a pickaxe helps stone, and axe helps wood.
+     * But in this case if it will cause multipliers for each
+     * tier
+     *
+     * @param tool Tool to test
+     * @param mat  The type of material being mined
+     * @return If this tool helps or not
+     */
+    public boolean doesToolMultiply(Tool tool, Material mat, Player player) {
+        // Tier of tool
+        ToolTier tier = getTier(player);
+
+        // No tool so doesn't help
+        if (tier == ToolTier.NONE) return false;
+
+        // Get compatibility from material
+        // Now checks for legacy materials
+        CompatibleMaterial type = CompatibleMaterial.getBlockMaterial(mat);
+
+        // Make sure type exists
+        if (type == null) {
+            return false;
+        }
+
+        // Run various checks per tool
+        // Currently a lot of legacy materials
+        // since it covers most things
+        //
+        // Simply
+        if (tool == Tool.AXE) {
+            // Axe blocks
+            return type == COCOA ||
+                    type == JACK_O_LANTERN ||
+                    type == PUMPKIN ||
+                    type == VINE ||
+                    type == MELON ||
+                    type == BEE_NEST ||
+
+                    type == WHITE_BANNER ||
+                    type == ORANGE_BANNER ||
+                    type == PURPLE_BANNER ||
+                    type == MAGENTA_BANNER ||
+                    type == LIGHT_BLUE_BANNER ||
+                    type == YELLOW_BANNER ||
+                    type == LIME_BANNER ||
+                    type == PINK_BANNER ||
+                    type == GRAY_BANNER ||
+                    type == LIGHT_GRAY_BANNER ||
+                    type == CYAN_BANNER ||
+                    type == BLUE_BANNER ||
+                    type == BROWN_BANNER ||
+                    type == GREEN_BANNER ||
+                    type == RED_BANNER ||
+                    type == BLACK_BANNER ||
+
+                    type == WHITE_WALL_BANNER ||
+                    type == ORANGE_WALL_BANNER ||
+                    type == PURPLE_WALL_BANNER ||
+                    type == MAGENTA_WALL_BANNER ||
+                    type == LIGHT_BLUE_WALL_BANNER ||
+                    type == YELLOW_WALL_BANNER ||
+                    type == LIME_WALL_BANNER ||
+                    type == PINK_WALL_BANNER ||
+                    type == GRAY_WALL_BANNER ||
+                    type == LIGHT_GRAY_WALL_BANNER ||
+                    type == CYAN_WALL_BANNER ||
+                    type == BLUE_WALL_BANNER ||
+                    type == BROWN_WALL_BANNER ||
+                    type == GREEN_WALL_BANNER ||
+                    type == RED_WALL_BANNER ||
+                    type == BLACK_WALL_BANNER ||
+
+                    type == BOOKSHELF ||
+                    type == CHEST ||
+                    type == BEEHIVE ||
+                    type == CRAFTING_TABLE ||
+                    type == DAYLIGHT_DETECTOR ||
+                    type == OAK_FENCE ||
+                    type == SPRUCE_FENCE ||
+                    type == BIRCH_FENCE ||
+                    type == JUNGLE_FENCE ||
+                    type == ACACIA_FENCE ||
+                    type == DARK_OAK_FENCE ||
+                    type == OAK_FENCE_GATE ||
+                    type == SPRUCE_FENCE_GATE ||
+                    type == BIRCH_FENCE_GATE ||
+                    type == JUNGLE_FENCE_GATE ||
+                    type == ACACIA_FENCE_GATE ||
+                    type == DARK_OAK_FENCE_GATE ||
+                    type == RED_MUSHROOM_BLOCK ||
+                    type == BROWN_MUSHROOM_BLOCK ||
+                    type == JUKEBOX ||
+                    type == LADDER ||
+                    type == NOTE_BLOCK ||
+                    type == OAK_SIGN ||
+                    type == SPRUCE_SIGN ||
+                    type == BIRCH_SIGN ||
+                    type == JUNGLE_SIGN ||
+                    type == ACACIA_SIGN ||
+                    type == DARK_OAK_SIGN ||
+                    type == OAK_WALL_SIGN ||
+                    type == SPRUCE_WALL_SIGN ||
+                    type == BIRCH_WALL_SIGN ||
+                    type == JUNGLE_WALL_SIGN ||
+                    type == ACACIA_WALL_SIGN ||
+                    type == DARK_OAK_WALL_SIGN ||
+                    type == TRAPPED_CHEST ||
+
+                    type == OAK_WOOD ||
+                    type == SPRUCE_WOOD ||
+                    type == BIRCH_WOOD ||
+                    type == JUNGLE_WOOD ||
+                    type == ACACIA_WOOD ||
+                    type == DARK_OAK_WOOD ||
+
+                    type == OAK_LOG ||
+                    type == SPRUCE_LOG ||
+                    type == BIRCH_LOG ||
+                    type == JUNGLE_LOG ||
+                    type == ACACIA_LOG ||
+                    type == DARK_OAK_LOG ||
+
+                    type == OAK_PLANKS ||
+                    type == SPRUCE_PLANKS ||
+                    type == BIRCH_PLANKS ||
+                    type == JUNGLE_PLANKS ||
+                    type == ACACIA_PLANKS ||
+                    type == DARK_OAK_PLANKS ||
+
+                    type == OAK_BUTTON ||
+                    type == SPRUCE_BUTTON ||
+                    type == BIRCH_BUTTON ||
+                    type == JUNGLE_BUTTON ||
+                    type == ACACIA_BUTTON ||
+                    type == DARK_OAK_BUTTON ||
+
+                    type == OAK_DOOR ||
+                    type == SPRUCE_DOOR ||
+                    type == BIRCH_DOOR ||
+                    type == JUNGLE_DOOR ||
+                    type == ACACIA_DOOR ||
+                    type == DARK_OAK_DOOR ||
+
+                    type == OAK_PRESSURE_PLATE ||
+                    type == SPRUCE_PRESSURE_PLATE ||
+                    type == BIRCH_PRESSURE_PLATE ||
+                    type == JUNGLE_PRESSURE_PLATE ||
+                    type == ACACIA_PRESSURE_PLATE ||
+                    type == DARK_OAK_PRESSURE_PLATE ||
+
+                    type == OAK_SLAB ||
+                    type == SPRUCE_SLAB ||
+                    type == BIRCH_SLAB ||
+                    type == JUNGLE_SLAB ||
+                    type == ACACIA_SLAB ||
+                    type == DARK_OAK_SLAB ||
+
+                    type == OAK_STAIRS ||
+                    type == SPRUCE_STAIRS ||
+                    type == BIRCH_STAIRS ||
+                    type == JUNGLE_STAIRS ||
+                    type == ACACIA_STAIRS ||
+                    type == DARK_OAK_STAIRS ||
+
+                    type == OAK_TRAPDOOR ||
+                    type == SPRUCE_TRAPDOOR ||
+                    type == BIRCH_TRAPDOOR ||
+                    type == JUNGLE_TRAPDOOR ||
+                    type == ACACIA_TRAPDOOR ||
+                    type == DARK_OAK_TRAPDOOR ||
+
+                    type == STRIPPED_OAK_WOOD ||
+                    type == STRIPPED_OAK_LOG ||
+                    type == STRIPPED_SPRUCE_WOOD ||
+                    type == STRIPPED_SPRUCE_LOG ||
+                    type == STRIPPED_BIRCH_WOOD ||
+                    type == STRIPPED_BIRCH_LOG ||
+                    type == STRIPPED_JUNGLE_WOOD ||
+                    type == STRIPPED_JUNGLE_LOG ||
+                    type == STRIPPED_ACACIA_WOOD ||
+                    type == STRIPPED_ACACIA_LOG ||
+                    type == STRIPPED_DARK_OAK_WOOD ||
+                    type == STRIPPED_DARK_OAK_LOG;
+        } else if (tool == Tool.PICKAXE) {
+            // Checks for each tier
+            // include all blocks for that tier
+            return type == ICE ||
+                    type == PACKED_ICE ||
+                    type == BLUE_ICE ||
+                    type == FROSTED_ICE ||
+
+                    type == ANVIL ||
+                    type == REDSTONE_BLOCK ||
+                    type == BREWING_STAND ||
+                    type == CAULDRON ||
+                    type == IRON_BARS ||
+                    type == IRON_DOOR ||
+                    type == IRON_TRAPDOOR ||
+                    type == HOPPER ||
+                    type == HEAVY_WEIGHTED_PRESSURE_PLATE ||
+                    type == LIGHT_WEIGHTED_PRESSURE_PLATE ||
+
+                    type == PISTON ||
+                    type == STICKY_PISTON ||
+                    type == PISTON_HEAD ||
+
+                    type == SHULKER_BOX ||
+                    type == WHITE_SHULKER_BOX ||
+                    type == ORANGE_SHULKER_BOX ||
+                    type == PURPLE_SHULKER_BOX ||
+                    type == MAGENTA_SHULKER_BOX ||
+                    type == LIGHT_BLUE_SHULKER_BOX ||
+                    type == YELLOW_SHULKER_BOX ||
+                    type == LIME_SHULKER_BOX ||
+                    type == PINK_SHULKER_BOX ||
+                    type == GRAY_SHULKER_BOX ||
+                    type == LIGHT_GRAY_SHULKER_BOX ||
+                    type == CYAN_SHULKER_BOX ||
+                    type == BLUE_SHULKER_BOX ||
+                    type == BROWN_SHULKER_BOX ||
+                    type == GREEN_SHULKER_BOX ||
+                    type == RED_SHULKER_BOX ||
+                    type == BLACK_SHULKER_BOX ||
+
+                    type == ACTIVATOR_RAIL ||
+                    type == DETECTOR_RAIL ||
+                    type == POWERED_RAIL ||
+                    type == RAIL ||
+
+                    type == ANDESITE ||
+                    type == COAL_BLOCK ||
+                    type == QUARTZ_BLOCK ||
+                    type == QUARTZ_PILLAR ||
+                    type == QUARTZ_SLAB ||
+                    type == BRICKS ||
+                    type == BRICK_SLAB ||
+                    type == BRICK_STAIRS ||
+                    type == COAL_ORE ||
+                    type == COBBLESTONE ||
+                    type == COBBLESTONE_SLAB ||
+                    type == COBBLESTONE_STAIRS ||
+                    type == COBBLESTONE_WALL ||
+                    type == MOSSY_COBBLESTONE ||
+                    type == MOSSY_COBBLESTONE_SLAB ||
+                    type == MOSSY_COBBLESTONE_STAIRS ||
+                    type == MOSSY_COBBLESTONE_WALL ||
+
+                    type == WHITE_CONCRETE ||
+                    type == ORANGE_CONCRETE ||
+                    type == PURPLE_CONCRETE ||
+                    type == MAGENTA_CONCRETE ||
+                    type == LIGHT_BLUE_CONCRETE ||
+                    type == YELLOW_CONCRETE ||
+                    type == LIME_CONCRETE ||
+                    type == PINK_CONCRETE ||
+                    type == GRAY_CONCRETE ||
+                    type == LIGHT_GRAY_CONCRETE ||
+                    type == CYAN_CONCRETE ||
+                    type == BLUE_CONCRETE ||
+                    type == BROWN_CONCRETE ||
+                    type == GREEN_CONCRETE ||
+                    type == RED_CONCRETE ||
+                    type == BLACK_CONCRETE ||
+
+                    type == DARK_PRISMARINE ||
+                    type == DARK_PRISMARINE_SLAB ||
+                    type == DARK_PRISMARINE_STAIRS ||
+                    type == DIORITE ||
+                    type == DIORITE_SLAB ||
+                    type == DIORITE_STAIRS ||
+                    type == DIORITE_WALL ||
+                    type == DISPENSER ||
+                    type == DROPPER ||
+                    type == ENCHANTING_TABLE ||
+                    type == END_STONE ||
+                    type == END_STONE_BRICKS ||
+                    type == END_STONE_BRICK_SLAB ||
+                    type == END_STONE_BRICK_STAIRS ||
+                    type == END_STONE_BRICK_WALL ||
+                    type == ENDER_CHEST ||
+                    type == FURNACE ||
+                    type == GRANITE ||
+                    type == GRANITE_SLAB ||
+                    type == GRANITE_STAIRS ||
+                    type == GRANITE_WALL ||
+                    type == NETHER_BRICKS ||
+                    type == NETHER_BRICK_SLAB ||
+                    type == NETHER_BRICK_STAIRS ||
+                    type == NETHER_BRICK_FENCE ||
+                    type == NETHER_QUARTZ_ORE ||
+                    type == NETHERRACK ||
+                    type == POLISHED_ANDESITE ||
+                    type == POLISHED_ANDESITE_SLAB ||
+                    type == POLISHED_ANDESITE_STAIRS ||
+                    type == PRISMARINE ||
+                    type == PRISMARINE_SLAB ||
+                    type == PRISMARINE_STAIRS ||
+                    type == PRISMARINE_BRICKS ||
+                    type == PRISMARINE_BRICK_SLAB ||
+                    type == PRISMARINE_BRICK_STAIRS ||
+                    type == POLISHED_DIORITE ||
+                    type == POLISHED_DIORITE_SLAB ||
+                    type == POLISHED_DIORITE_STAIRS ||
+                    type == POLISHED_GRANITE ||
+                    type == POLISHED_GRANITE_SLAB ||
+                    type == POLISHED_GRANITE_STAIRS ||
+                    type == RED_SANDSTONE ||
+                    type == RED_SANDSTONE_SLAB ||
+                    type == RED_SANDSTONE_STAIRS ||
+                    type == RED_SANDSTONE_WALL ||
+                    type == SANDSTONE ||
+                    type == SANDSTONE_STAIRS ||
+                    type == SANDSTONE_SLAB ||
+                    type == SANDSTONE_WALL ||
+                    type == SPAWNER ||
+                    type == SMOOTH_STONE ||
+                    type == SMOOTH_STONE_SLAB ||
+                    type == STONE ||
+                    type == STONE_SLAB ||
+                    type == STONE_STAIRS ||
+                    type == STONE_BRICKS ||
+                    type == STONE_BRICK_SLAB ||
+                    type == STONE_BRICK_STAIRS ||
+                    type == STONE_BRICK_WALL ||
+                    type == STONE_BUTTON ||
+                    type == STONE_PRESSURE_PLATE ||
+                    type == TERRACOTTA ||
+
+                    type == IRON_BLOCK ||
+                    type == LAPIS_BLOCK ||
+
+                    type == IRON_ORE ||
+                    type == LAPIS_ORE ||
+                    type == DIAMOND_BLOCK ||
+                    type == EMERALD_BLOCK ||
+                    type == GOLD_BLOCK ||
+
+                    type == DIAMOND_ORE ||
+                    type == EMERALD_ORE ||
+                    type == GOLD_ORE ||
+                    type == REDSTONE_ORE ||
+
+                    type == OBSIDIAN;
         } else if (tool == Tool.SHEARS) {
             return type == OAK_LEAVES ||
                     type == SPRUCE_LEAVES ||
