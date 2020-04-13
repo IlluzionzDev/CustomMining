@@ -70,7 +70,8 @@ public enum HardnessController implements BukkitController<CustomMining> {
         if (doesToolMultiply(getHeldTool(player), block.getType(), player))
             baseTime /= getMultiplier(getTier(player), block.getType());
 
-        baseTime = MathUtil.round(baseTime, 2);
+        // Round to nearest 0.05 like minecraft breaking time
+        baseTime = (float) (Math.round(baseTime * 20.0) / 20.0);
 
         Logger.debug(baseTime);
 
