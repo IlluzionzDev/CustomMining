@@ -1255,7 +1255,11 @@ public enum HardnessController implements BukkitController<CustomMining> {
         // Get type of held item
         String name = heldItem.getType().name().toUpperCase();
 
-        if (name.startsWith("WOOD") || name.startsWith("WOODEN")) {
+        // Sword check first since this can have
+        // WOOD or DIAMOND before it
+        if (name.endsWith("SWORD")) {
+            return ToolTier.SWORD;
+        } else if (name.startsWith("WOOD") || name.startsWith("WOODEN")) {
             return ToolTier.WOOD;
         } else if (name.startsWith("STONE")) {
             return ToolTier.STONE;
@@ -1267,8 +1271,6 @@ public enum HardnessController implements BukkitController<CustomMining> {
             return ToolTier.GOLD;
         } else if (name.startsWith("SHEARS")) {
             return ToolTier.SHEARS;
-        } else if (name.endsWith("SWORD")) {
-            return ToolTier.SWORD;
         }
 
         // Default no tier
