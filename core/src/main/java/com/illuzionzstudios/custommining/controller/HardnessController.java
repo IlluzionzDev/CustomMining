@@ -243,12 +243,56 @@ public enum HardnessController implements BukkitController<CustomMining> {
                 type == WET_SPONGE ||
                 type == CAKE ||
                 type == DRAGON_EGG ||
+                type == BEACON ||
+                type == LEVER ||
+                type == PISTON ||
+                type == STICKY_PISTON ||
+                type == CACTUS ||
                 type == PLAYER_HEAD ||
                 type == CREEPER_HEAD ||
                 type == ZOMBIE_HEAD ||
                 type == PLAYER_WALL_HEAD ||
                 type == CREEPER_WALL_HEAD ||
                 type == ZOMBIE_WALL_HEAD ||
+                type == GLOWSTONE ||
+                type == REDSTONE_LAMP ||
+                type == SEA_LANTERN ||
+                type == GLASS ||
+                type == GLASS_PANE ||
+
+                type == WHITE_STAINED_GLASS ||
+                type == ORANGE_STAINED_GLASS ||
+                type == PURPLE_STAINED_GLASS ||
+                type == MAGENTA_STAINED_GLASS ||
+                type == LIGHT_BLUE_STAINED_GLASS ||
+                type == YELLOW_STAINED_GLASS ||
+                type == LIME_STAINED_GLASS ||
+                type == PINK_STAINED_GLASS ||
+                type == GRAY_STAINED_GLASS ||
+                type == LIGHT_GRAY_STAINED_GLASS ||
+                type == CYAN_STAINED_GLASS ||
+                type == BLUE_STAINED_GLASS ||
+                type == BROWN_STAINED_GLASS ||
+                type == GREEN_STAINED_GLASS ||
+                type == RED_STAINED_GLASS ||
+                type == BLACK_STAINED_GLASS ||
+
+                type == WHITE_STAINED_GLASS_PANE ||
+                type == ORANGE_STAINED_GLASS_PANE ||
+                type == PURPLE_STAINED_GLASS_PANE ||
+                type == MAGENTA_STAINED_GLASS_PANE ||
+                type == LIGHT_BLUE_STAINED_GLASS_PANE ||
+                type == YELLOW_STAINED_GLASS_PANE ||
+                type == LIME_STAINED_GLASS_PANE ||
+                type == PINK_STAINED_GLASS_PANE ||
+                type == GRAY_STAINED_GLASS_PANE ||
+                type == LIGHT_GRAY_STAINED_GLASS_PANE ||
+                type == CYAN_STAINED_GLASS_PANE ||
+                type == BLUE_STAINED_GLASS_PANE ||
+                type == BROWN_STAINED_GLASS_PANE ||
+                type == GREEN_STAINED_GLASS_PANE ||
+                type == RED_STAINED_GLASS_PANE ||
+                type == BLACK_STAINED_GLASS_PANE ||
 
                 type == WHITE_BANNER ||
                 type == ORANGE_BANNER ||
