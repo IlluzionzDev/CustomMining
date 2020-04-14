@@ -700,6 +700,23 @@ public enum HardnessController implements BukkitController<CustomMining> {
                         type == RED_CONCRETE ||
                         type == BLACK_CONCRETE ||
 
+                        type == WHITE_GLAZED_TERRACOTTA ||
+                        type == ORANGE_GLAZED_TERRACOTTA ||
+                        type == PURPLE_GLAZED_TERRACOTTA ||
+                        type == MAGENTA_GLAZED_TERRACOTTA ||
+                        type == LIGHT_BLUE_GLAZED_TERRACOTTA ||
+                        type == YELLOW_GLAZED_TERRACOTTA ||
+                        type == LIME_GLAZED_TERRACOTTA ||
+                        type == PINK_GLAZED_TERRACOTTA ||
+                        type == GRAY_GLAZED_TERRACOTTA ||
+                        type == LIGHT_GRAY_GLAZED_TERRACOTTA ||
+                        type == CYAN_GLAZED_TERRACOTTA ||
+                        type == BLUE_GLAZED_TERRACOTTA ||
+                        type == BROWN_GLAZED_TERRACOTTA ||
+                        type == GREEN_GLAZED_TERRACOTTA ||
+                        type == RED_GLAZED_TERRACOTTA ||
+                        type == BLACK_GLAZED_TERRACOTTA ||
+
                         type == DARK_PRISMARINE ||
                         type == DARK_PRISMARINE_SLAB ||
                         type == DARK_PRISMARINE_STAIRS ||
@@ -1119,6 +1136,23 @@ public enum HardnessController implements BukkitController<CustomMining> {
                     type == GREEN_CONCRETE ||
                     type == RED_CONCRETE ||
                     type == BLACK_CONCRETE ||
+
+                    type == WHITE_GLAZED_TERRACOTTA ||
+                    type == ORANGE_GLAZED_TERRACOTTA ||
+                    type == PURPLE_GLAZED_TERRACOTTA ||
+                    type == MAGENTA_GLAZED_TERRACOTTA ||
+                    type == LIGHT_BLUE_GLAZED_TERRACOTTA ||
+                    type == YELLOW_GLAZED_TERRACOTTA ||
+                    type == LIME_GLAZED_TERRACOTTA ||
+                    type == PINK_GLAZED_TERRACOTTA ||
+                    type == GRAY_GLAZED_TERRACOTTA ||
+                    type == LIGHT_GRAY_GLAZED_TERRACOTTA ||
+                    type == CYAN_GLAZED_TERRACOTTA ||
+                    type == BLUE_GLAZED_TERRACOTTA ||
+                    type == BROWN_GLAZED_TERRACOTTA ||
+                    type == GREEN_GLAZED_TERRACOTTA ||
+                    type == RED_GLAZED_TERRACOTTA ||
+                    type == BLACK_GLAZED_TERRACOTTA ||
 
                     type == DARK_PRISMARINE ||
                     type == DARK_PRISMARINE_SLAB ||
