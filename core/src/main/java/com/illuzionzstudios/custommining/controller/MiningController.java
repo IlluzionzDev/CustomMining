@@ -180,7 +180,9 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
             // Here breaktime is 0, so we just insta break
             // Also check default block hardness because can't change
             // break time of default insta breaks
-            if (HardnessController.INSTANCE.processFinalBreakTime(block, player) == 0 || handler.getDefaultBlockHardness(block) == 0.0) {
+            if ((HardnessController.INSTANCE.processFinalBreakTime(block, player) >= 0 &&
+                    HardnessController.INSTANCE.processFinalBreakTime(block, player) <= 0.05) ||
+                    handler.getDefaultBlockHardness(block) == 0.0) {
                 breakBlock(player, block);
                 return;
             }
@@ -281,31 +283,35 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
      * @param block Block to stop the task for
      */
     public void cancelBreaking(Block block) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (miningTasks.containsKey(player.getUniqueId())) {
-                ArrayList<MiningTask> list = miningTasks.get(player.getUniqueId());
+        try {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (miningTasks.containsKey(player.getUniqueId())) {
+                    ArrayList<MiningTask> list = miningTasks.get(player.getUniqueId());
 
-                // Only need the first as we can't have two tasks at the same location
-                Optional<MiningTask> taskStream = list.stream().filter(miningTask -> miningTask.getBlock().getLocation().equals(block.getLocation())).findFirst();
+                    // Only need the first as we can't have two tasks at the same location
+                    Optional<MiningTask> taskStream = list.stream().filter(miningTask -> miningTask.getBlock().getLocation().equals(block.getLocation())).findFirst();
 
-                // If no task simply return because we don't need to do anything else
-                if (!taskStream.isPresent()) return;
+                    // If no task simply return because we don't need to do anything else
+                    if (!taskStream.isPresent()) return;
 
-                // Finally assign found task to our instanced task
-                MiningTask task = taskStream.get();
+                    // Finally assign found task to our instanced task
+                    MiningTask task = taskStream.get();
 
-                // Cancel mining task
-                scheduler.cancelTask(task.getTaskID());
-                list.remove(task);
-                if (list.isEmpty()) {
-                    // Their tasks now empty so remove
-                    miningTasks.remove(player.getUniqueId());
-                    handler.sendBlockBreak(block, 10, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
-                } else {
-                    // Otherwise just update list with removed task
-                    miningTasks.put(player.getUniqueId(), list);
+                    // Cancel mining task
+                    scheduler.cancelTask(task.getTaskID());
+                    list.remove(task);
+                    if (list.isEmpty()) {
+                        // Their tasks now empty so remove
+                        miningTasks.remove(player.getUniqueId());
+                        handler.sendBlockBreak(block, 10, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
+                    } else {
+                        // Otherwise just update list with removed task
+                        miningTasks.put(player.getUniqueId(), list);
+                    }
                 }
             }
+        } catch (Exception ignored) {
+            // Sometimes random error with accessing list
         }
     }
 
