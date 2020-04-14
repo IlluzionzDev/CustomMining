@@ -261,6 +261,9 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
         if (miningTasks.containsKey(player.getUniqueId())) {
             for (MiningTask task : miningTasks.get(player.getUniqueId())) {
                 if (task.getBlock().getLocation().equals(block.getLocation())) {
+                    // Make sure to update break time
+                    // if tool switched etc
+                    task.setBreakTime(HardnessController.INSTANCE.processFinalBreakTime(block, player));
                     task.setEnabled(true);
                     return task;
                 }

@@ -1,6 +1,8 @@
 package com.illuzionzstudios.custommining.task;
 
+import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.core.util.PlayerUtil;
+import com.illuzionzstudios.custommining.controller.HardnessController;
 import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.scheduler.MinecraftScheduler;
@@ -43,6 +45,12 @@ public class MiningTask implements Runnable {
     private int totalTicks = 0;
 
     /**
+     * Last damage number used for comparing
+     * to avoid resetting progress
+     */
+    private int lastDamage = 0;
+
+    /**
      * Our task ID to identify the task
      */
     @Setter
@@ -59,9 +67,23 @@ public class MiningTask implements Runnable {
     private final Block block;
 
     /**
-     * Total time to break the block in ticks
+     * If the break time changed so we can update logic
      */
-    private final float breakTime;
+    private boolean changedBreakTime;
+
+    /**
+     * Total time to break the block in ticks
+     *
+     * Can be set when tool etc changes
+     */
+    private float breakTime;
+
+    /**
+     * Percent complete of task
+     *
+     * Used for scaling
+     */
+    private float percent = 0;
 
     /**
      * If true, the task will tick breaking.
@@ -99,7 +121,7 @@ public class MiningTask implements Runnable {
 
         if (!enabled) return;
 
-        // Been enabled for over threshhold
+        // Been enabled for over threshold
         // Urgent cleanup so it doesn't run forever
         // and lag the server
         if (totalSeconds >= Settings.CLEANUP_THRESHOLD.getInt()) {
@@ -116,8 +138,19 @@ public class MiningTask implements Runnable {
         // Reset ticks since it was enabled
         this.ticks = 0;
 
+        if (changedBreakTime) {
+            // Update counters
+            setPercent(percent);
+
+            // Reset
+            this.changedBreakTime = false;
+        }
+
         // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
         int damage = (int) (counter / breakTime * 10);
+
+        // Update last variable
+        lastDamage = damage;
 
         // Send the damage animation state once for each increment
         if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / breakTime * 10))) {
@@ -128,11 +161,48 @@ public class MiningTask implements Runnable {
         counter++;
 
         // Reached break time
-        if (counter >= breakTime) {
+        if (getPercent() >= 100f) {
             // Handle breaking the block
             MinecraftScheduler.get().synchronize(() -> {
                 MiningController.INSTANCE.breakBlock(player, block);
             });
         }
+    }
+
+    /**
+     * @param time Change the break time of the block
+     */
+    public void setBreakTime(float time) {
+        // Set changed base on if actually changed
+        this.changedBreakTime = this.breakTime != time;
+
+        // Update
+        this.breakTime = time;
+    }
+
+    /**
+     * @return Percent of task completed
+     */
+    public float getPercent() {
+        // Find percent counter is of breaktime
+        float p = (counter / breakTime) * 100;
+
+        // Update local percentage
+        if (this.percent != p)
+        this.percent = p;
+        return p;
+    }
+
+    /**
+     * Updates counters accordingly
+     *
+     * @param percent Set the percent completed of task
+     */
+    public void setPercent(float percent) {
+        // Get percentage of breaktime
+        this.counter = (int) (breakTime * (percent / 100));
+
+        // Update local
+        getPercent();
     }
 }

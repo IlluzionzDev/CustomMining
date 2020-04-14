@@ -67,7 +67,7 @@ public class MiningHandler_1_15_R1 implements MiningHandler {
 //                new Random().nextInt(20) + 10,
 //                0.25, 0.25, 0.25, Material.BEDROCK.createBlockData());
 
-//        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType().createBlockData().getMaterial());
+        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, Material.STONE);
         // Stupid spigot doesn't like variables
         // and only likes explicit types
         // Like wtf mojang

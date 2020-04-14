@@ -56,8 +56,6 @@ public enum HardnessController implements BukkitController<CustomMining> {
      * @return Break time in ticks
      */
     public float processFinalBreakTime(Block block, Player player) {
-        Logger.debug(doesToolHelp(getHeldTool(player), block.getType(), player));
-
         // Hardness calculations
         float hardness = MiningController.INSTANCE.handler.getDefaultBlockHardness(block);
 
@@ -72,8 +70,6 @@ public enum HardnessController implements BukkitController<CustomMining> {
 
         // Round to nearest 0.05 like minecraft breaking time
         baseTime = (float) (Math.round(baseTime * 20.0) / 20.0);
-
-        Logger.debug(baseTime);
 
         // Change to ticks
         return baseTime * 20;
