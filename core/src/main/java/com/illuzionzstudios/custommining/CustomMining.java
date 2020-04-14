@@ -4,6 +4,7 @@ import com.illuzionzstudios.config.Config;
 import com.illuzionzstudios.core.plugin.IlluzionzPlugin;
 import com.illuzionzstudios.custommining.controller.HardnessController;
 import com.illuzionzstudios.custommining.controller.MiningController;
+import com.illuzionzstudios.custommining.controller.ModifierController;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.scheduler.bukkit.BukkitScheduler;
 
@@ -39,11 +40,13 @@ public final class CustomMining extends IlluzionzPlugin {
         new BukkitScheduler(this).initialize();
 
         // Load controllers
+        ModifierController.INSTANCE.initialize(this);
         HardnessController.INSTANCE.initialize(this);
         MiningController.INSTANCE.initialize(this);
     }
 
     public void onPluginDisable() {
+        ModifierController.INSTANCE.stop(this);
         HardnessController.INSTANCE.stop(this);
         MiningController.INSTANCE.stop(this);
     }

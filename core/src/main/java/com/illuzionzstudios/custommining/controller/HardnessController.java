@@ -12,8 +12,6 @@ package com.illuzionzstudios.custommining.controller;
 
 import com.illuzionzstudios.compatibility.CompatibleMaterial;
 import com.illuzionzstudios.core.bukkit.controller.BukkitController;
-import com.illuzionzstudios.core.util.Logger;
-import com.illuzionzstudios.core.util.MathUtil;
 import com.illuzionzstudios.custommining.CustomMining;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,6 +27,11 @@ import static com.illuzionzstudios.compatibility.CompatibleMaterial.*;
  * All will be configurable giving the server owner full control over
  * how breaking works on their server. Also there will be permission
  * based modifiers so certain people can have different modifiers.
+ *
+ * All information taken from these sources
+ * https://minecraft.gamepedia.com/Breaking
+ * https://minecraft.gamepedia.com/Mining_Fatigue
+ * https://minecraft.gamepedia.com/Haste
  */
 public enum HardnessController implements BukkitController<CustomMining> {
     INSTANCE;
@@ -64,9 +67,24 @@ public enum HardnessController implements BukkitController<CustomMining> {
                 (float) (hardness * 1.5) :
                 hardness * 5;
 
-        // Multipliers
-        if (doesToolMultiply(getHeldTool(player), block.getType(), player))
-            baseTime /= getMultiplier(getTier(player), block.getType());
+        // The modifier to apply
+        float modifier = 1;
+
+        // Multipliers only if tool helps
+        if (doesToolMultiply(getHeldTool(player), block.getType(), player)) {
+            modifier = getBaseMultiplier(getTier(player), block.getType());
+            modifier = ModifierController.INSTANCE.getEnchantmentModifiers(modifier, block, player);
+        }
+
+        // Modifiers that always apply
+        modifier = ModifierController.INSTANCE.getPotionModifiers(modifier, block, player);
+
+        // Check insta breaking
+        // Vanilla minecraft method to see if insta breaks
+        if (modifier > hardness * 30) return 0f;
+
+        // Apply modifiers
+        baseTime /= modifier;
 
         // Round to nearest 0.05 like minecraft breaking time
         baseTime = (float) (Math.round(baseTime * 20.0) / 20.0);
@@ -77,11 +95,12 @@ public enum HardnessController implements BukkitController<CustomMining> {
 
     /**
      * Get the breaking multiplier for a tool tier
+     * (This is also known as the damage dealt pet tick)
      *
      * @param tier Tier to get multiplier for
      * @return Multiplier as float
      */
-    public float getMultiplier(ToolTier tier, Material mat) {
+    public float getBaseMultiplier(ToolTier tier, Material mat) {
         // Get compatibility from material
         // Now checks for legacy materials
         CompatibleMaterial type = CompatibleMaterial.getBlockMaterial(mat);
