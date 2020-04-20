@@ -32,6 +32,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
@@ -327,7 +328,13 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
         cancelBreaking(block);
 
         // Actually break the block
-        block.breakNaturally(player.getInventory().getItemInMainHand());
+        block.setType(Material.AIR);
+        Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
+
+        // Drop all drops
+        drops.forEach(drop -> {
+            block.getWorld().dropItem(block.getLocation(), drop);
+        });
 
         // Block break effect
         handler.playBreakEffect(block);

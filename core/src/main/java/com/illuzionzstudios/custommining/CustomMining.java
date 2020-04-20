@@ -7,6 +7,7 @@ import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.controller.ModifierController;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.scheduler.bukkit.BukkitScheduler;
+import org.bstats.bukkit.Metrics;
 
 import java.util.List;
 
@@ -43,6 +44,10 @@ public final class CustomMining extends IlluzionzPlugin {
         ModifierController.INSTANCE.initialize(this);
         HardnessController.INSTANCE.initialize(this);
         MiningController.INSTANCE.initialize(this);
+
+        // Metrics
+        int pluginId = 7248;
+        Metrics metrics = new Metrics(this, pluginId);
     }
 
     public void onPluginDisable() {
