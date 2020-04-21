@@ -129,13 +129,18 @@ public class MiningTask implements Runnable {
         Logger.debug("Break Time: " + requiredDamage / damagePerTick);
     }
 
-    public MiningTask(Player player, Block block, int hardness, int damagePerTick) {
+    /**
+     * @param damagePerTick Has to be passed as double to distinguish
+     */
+    public MiningTask(Player player, Block block, float hardness, double damagePerTick) {
         this.player = player;
         this.block = block;
         this.hardness = hardness;
         // Set formula for required total damage
         this.requiredDamage = hardness * 30;
-        this.damagePerTick = damagePerTick;
+        this.damagePerTick = (float) damagePerTick;
+
+        Logger.debug("Break Time: " + requiredDamage / damagePerTick);
     }
 
     /**

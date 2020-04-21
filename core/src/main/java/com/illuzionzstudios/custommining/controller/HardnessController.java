@@ -48,6 +48,43 @@ public enum HardnessController implements BukkitController<CustomMining> {
     }
 
     /**
+     * Master method for determining the final damage to a block.
+     * Takes into account all blocks, enchants, potions, regions, and
+     * outputs the value we plug into the MiningTask. Other calculations are done
+     * in other methods but are linked here for the final result
+     * <p>
+     * Returning Integer.MAX_VALUE (Or any absurdly large number)
+     * means instantly break and <= 0 means unbreakable
+     *
+     * @param block  The block trying to be mined
+     * @param player The player mining the block
+     * @return Damage done per tick
+     */
+    public float processDamagePerTick(Block block, Player player) {
+        // Hardness calculations
+        float hardness = MiningController.INSTANCE.handler.getDefaultBlockHardness(block);
+
+        // Base time in seconds based on if tool helps
+        float breakTime = doesToolHelp(getHeldTool(player), block.getType(), player) ?
+                (float) (hardness * 1.5) :
+                hardness * 5;
+
+        // Convert base time to ticks
+        float damagePerTick = (int) ((hardness * 30) / breakTime);
+
+        // Multipliers only if tool helps
+        if (doesToolMultiply(getHeldTool(player), block.getType(), player)) {
+            damagePerTick = getBaseMultiplier(getTier(player), block.getType());
+            damagePerTick = ModifierController.INSTANCE.getEnchantmentModifiers(damagePerTick, block, player);
+        }
+
+        // Modifiers that always apply
+        damagePerTick = ModifierController.INSTANCE.getPotionModifiers(damagePerTick, block, player);
+
+        return damagePerTick;
+    }
+
+    /**
      * Master method for determining the final break time of a block.
      * Takes into account all blocks, enchants, potions, regions, and
      * outputs the value we plug into the MiningTask. Other calculations are done
