@@ -30,14 +30,17 @@ import java.util.Collections;
 public class MiningTask implements Runnable {
 
     /**
-     * Used to handle ticking the block break
+     * This counter tracks how many
+     * elapsedTicks the block has been mined
+     * for in total. We use to calculate
+     * damage numbers for the animation.
      */
     private int counter = 0;
 
     /**
      * Ticks passed since not enabled
      */
-    private int ticks = 0;
+    private int elapsedTicks = 0;
 
     /**
      * Ticks task is alive
@@ -86,6 +89,27 @@ public class MiningTask implements Runnable {
     private float percent = 0;
 
     /**
+     * This is the required damage required to break
+     * the block. This is based off damage by the calculation
+     * hardness * 30.
+     */
+    public int requiredDamage;
+
+    /**
+     * This keeps track of the total damage done
+     * to the block. Used to track if we've broken the block.
+     * If this exceeds {@link #requiredDamage}, it breaks the block.
+     */
+    public int damageDone;
+
+    /**
+     * This is the current amount of damage
+     * being done per tick. This is updated every time
+     * damage is different so if we change tool etc.
+     */
+    public int damagePerTick;
+
+    /**
      * If true, the task will tick breaking.
      * If set to false, it will pause breaking
      */
@@ -104,14 +128,14 @@ public class MiningTask implements Runnable {
      */
     @Override
     public void run() {
-        ticks++;
+        elapsedTicks++;
         totalTicks++;
 
         int totalSeconds = totalTicks / 20; // Total seconds passed
 
         // Handle cleanup here
         if (Settings.SAVE_PROGRESS.getBoolean()) {
-            int seconds = ticks / 20; // Seconds from ticks
+            int seconds = elapsedTicks / 20; // Seconds from elapsedTicks
 
             if (seconds >= Settings.CLEANUP_DELAY.getInt()) {
                 MiningController.INSTANCE.cancelBreaking(block);
@@ -135,8 +159,8 @@ public class MiningTask implements Runnable {
             return;
         }
 
-        // Reset ticks since it was enabled
-        this.ticks = 0;
+        // Reset elapsedTicks since it was enabled
+        this.elapsedTicks = 0;
 
         if (changedBreakTime) {
             // Update counters
