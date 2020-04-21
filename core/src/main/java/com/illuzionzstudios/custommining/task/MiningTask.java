@@ -119,6 +119,7 @@ public class MiningTask implements Runnable {
         this.block = block;
         this.hardness = hardness;
         // Set formula for required total damage
+        // Change into ticks
         this.requiredDamage = hardness * 30;
 
         // Formula to calculate damage to be done
@@ -126,7 +127,7 @@ public class MiningTask implements Runnable {
         // needed
         this.damagePerTick = (int) (requiredDamage / breakTime);
 
-        Logger.debug("Break Time: " + requiredDamage / damagePerTick);
+        Logger.debug("Break Time: " + (requiredDamage / damagePerTick) / 20);
     }
 
     /**
