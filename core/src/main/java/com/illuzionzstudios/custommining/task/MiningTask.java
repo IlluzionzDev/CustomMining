@@ -43,15 +43,9 @@ public class MiningTask implements Runnable {
     private int elapsedTicks = 0;
 
     /**
-     * Ticks task is alive
+     * Total ticks task is alive
      */
     private int totalTicks = 0;
-
-    /**
-     * Last damage number used for comparing
-     * to avoid resetting progress
-     */
-    private int lastDamage = 0;
 
     /**
      * Our task ID to identify the task
@@ -75,16 +69,8 @@ public class MiningTask implements Runnable {
     private boolean changedBreakTime;
 
     /**
-     * Total time to break the block in ticks
-     *
-     * Can be set when tool etc changes
-     */
-    private float breakTime;
-
-    /**
-     * Percent complete of task
-     *
-     * Used for scaling
+     * The stored percent of task
+     * completed.
      */
     private float percent = 0;
 
@@ -110,16 +96,38 @@ public class MiningTask implements Runnable {
     public int damagePerTick;
 
     /**
+     * The stored hardness of the block. This in sense
+     * is the break time, but used for damage calculation.
+     */
+    public int hardness;
+
+    /**
      * If true, the task will tick breaking.
      * If set to false, it will pause breaking
      */
     @Setter
     private boolean enabled = true;
 
-    public MiningTask(Player player, Block block, float breakTime) {
+    public MiningTask(Player player, Block block, int hardness, float breakTime) {
         this.player = player;
         this.block = block;
-        this.breakTime = breakTime;
+        this.hardness = hardness;
+        // Set formula for required total damage
+        this.requiredDamage = hardness * 30;
+
+        // Formula to calculate damage to be done
+        // from the amount of total ticks
+        // needed
+        this.damagePerTick = (int) (requiredDamage / breakTime);
+    }
+
+    public MiningTask(Player player, Block block, int hardness, int damagePerTick) {
+        this.player = player;
+        this.block = block;
+        this.hardness = hardness;
+        // Set formula for required total damage
+        this.requiredDamage = hardness * 30;
+        this.damagePerTick = damagePerTick;
     }
 
     /**
@@ -170,14 +178,16 @@ public class MiningTask implements Runnable {
             this.changedBreakTime = false;
         }
 
-        // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
-        int damage = (int) (counter / breakTime * 10);
+        // Deal damage to block
+        damageDone += damagePerTick;
 
-        // Update last variable
-        lastDamage = damage;
+        // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
+        // Do calculation for break time based off damage
+        int damage = (counter / (requiredDamage / damagePerTick) * 10);
 
         // Send the damage animation state once for each increment
-        if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / breakTime * 10))) {
+        // Check damage is not the same for previous tick
+        if (damage != (counter == 0 ? -1 : ((counter - 1) / (requiredDamage / damagePerTick) * 10))) {
             // Auto gets who to send animation to based on settings
             MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
         }
@@ -197,11 +207,17 @@ public class MiningTask implements Runnable {
      * @param time Change the break time of the block
      */
     public void setBreakTime(float time) {
+        // New calculated damage per tick
+        int damagePerTick = (int) (requiredDamage / time);
+
         // Set changed base on if actually changed
-        this.changedBreakTime = this.breakTime != time;
+        this.changedBreakTime = this.damagePerTick != damagePerTick;
 
         // Update
-        this.breakTime = time;
+        // Formula to calculate damage to be done
+        // from the amount of total ticks
+        // needed
+        this.damagePerTick = damagePerTick;
     }
 
     /**
@@ -209,7 +225,7 @@ public class MiningTask implements Runnable {
      */
     public float getPercent() {
         // Find percent counter is of breaktime
-        float p = (counter / breakTime) * 100;
+        float p = (damageDone / requiredDamage) * 100;
 
         // Update local percentage
         if (this.percent != p)
@@ -224,7 +240,7 @@ public class MiningTask implements Runnable {
      */
     public void setPercent(float percent) {
         // Get percentage of breaktime
-        this.counter = (int) (breakTime * (percent / 100));
+        this.damageDone = (int) (requiredDamage * (percent / 100));
 
         // Update local
         getPercent();
