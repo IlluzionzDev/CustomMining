@@ -31,13 +31,17 @@ public class MiningTask implements Runnable {
 
     /**
      * Used to handle ticking the block break
+     * This counter is how many ticks the block
+     * has been breaking. Then we simply check
+     * if this reaches the ticks needed for
+     * break time, if so, break.
      */
     private int counter = 0;
 
     /**
-     * Ticks passed since not enabled
+     * Elapsed ticks the task has been disabled
      */
-    private int ticks = 0;
+    private int elapsedTicks = 0;
 
     /**
      * Ticks task is alive
@@ -73,14 +77,12 @@ public class MiningTask implements Runnable {
 
     /**
      * Total time to break the block in ticks
-     *
      * Can be set when tool etc changes
      */
     private float breakTime;
 
     /**
      * Percent complete of task
-     *
      * Used for scaling
      */
     private float percent = 0;
@@ -104,14 +106,14 @@ public class MiningTask implements Runnable {
      */
     @Override
     public void run() {
-        ticks++;
+        elapsedTicks++;
         totalTicks++;
 
         int totalSeconds = totalTicks / 20; // Total seconds passed
 
         // Handle cleanup here
         if (Settings.SAVE_PROGRESS.getBoolean()) {
-            int seconds = ticks / 20; // Seconds from ticks
+            int seconds = elapsedTicks / 20; // Seconds from ticks
 
             if (seconds >= Settings.CLEANUP_DELAY.getInt()) {
                 MiningController.INSTANCE.cancelBreaking(block);
@@ -136,7 +138,7 @@ public class MiningTask implements Runnable {
         }
 
         // Reset ticks since it was enabled
-        this.ticks = 0;
+        this.elapsedTicks = 0;
 
         if (changedBreakTime) {
             // Update counters
@@ -147,17 +149,16 @@ public class MiningTask implements Runnable {
         }
 
         // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
-        int damage = (int) (counter / breakTime * 10);
-
-        // Update last variable
-        lastDamage = damage;
+        int damage = (int) getPercent() / 10;
 
         // Send the damage animation state once for each increment
-        if (damage != (counter == 0 ? -1 : (int) ((counter - 1) / breakTime * 10))) {
+        if (damage != (counter == 0 ? -1 : lastDamage)) {
             // Auto gets who to send animation to based on settings
             MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
         }
 
+        // Update last variable
+        lastDamage = damage;
         counter++;
 
         // Reached break time
@@ -184,7 +185,7 @@ public class MiningTask implements Runnable {
      * @return Percent of task completed
      */
     public float getPercent() {
-        // Find percent counter is of breaktime
+        // Find percent counter is of break time
         float p = (counter / breakTime) * 100;
 
         // Update local percentage
@@ -199,7 +200,7 @@ public class MiningTask implements Runnable {
      * @param percent Set the percent completed of task
      */
     public void setPercent(float percent) {
-        // Get percentage of breaktime
+        // Get percentage of break time
         this.counter = (int) (breakTime * (percent / 100));
 
         // Update local

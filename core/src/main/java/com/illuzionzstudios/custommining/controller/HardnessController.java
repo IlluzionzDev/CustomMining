@@ -81,14 +81,13 @@ public enum HardnessController implements BukkitController<CustomMining> {
         modifier = ModifierController.INSTANCE.getPotionModifiers(modifier, block, player);
 
         Logger.debug("Damage: " + modifier);
-        Logger.debug("Hardness Check: " + hardness * 30);
 
         // Check insta breaking
         // Vanilla minecraft method to see if insta breaks
         if (modifier > hardness * 30) return 0f;
 
         // Apply modifiers
-        baseTime = baseTime / modifier;
+        baseTime /= modifier;
 
         // Round to nearest 0.05 like minecraft breaking time
         baseTime = (float) (Math.round(baseTime * 20.0) / 20.0);
