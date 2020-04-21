@@ -210,7 +210,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 }
 
                 // Create new instance of block breaking runnable
-                MiningTask task = new MiningTask(player, block, HardnessController.INSTANCE.processFinalBreakTime(block, player));
+                MiningTask task = new MiningTask(player, block, handler.getDefaultBlockHardness(block), HardnessController.INSTANCE.processFinalBreakTime(block, player));
 
                 // Do task async, will handle minecraft things sync
                 int taskID = scheduler.scheduleAsyncRepeatingTask(plugin, task, 0L, 1L);

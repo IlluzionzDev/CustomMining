@@ -79,27 +79,27 @@ public class MiningTask implements Runnable {
      * the block. This is based off damage by the calculation
      * hardness * 30.
      */
-    public int requiredDamage;
+    public float requiredDamage;
 
     /**
      * This keeps track of the total damage done
      * to the block. Used to track if we've broken the block.
      * If this exceeds {@link #requiredDamage}, it breaks the block.
      */
-    public int damageDone;
+    public float damageDone;
 
     /**
      * This is the current amount of damage
      * being done per tick. This is updated every time
      * damage is different so if we change tool etc.
      */
-    public int damagePerTick;
+    public float damagePerTick;
 
     /**
      * The stored hardness of the block. This in sense
      * is the break time, but used for damage calculation.
      */
-    public int hardness;
+    public float hardness;
 
     /**
      * If true, the task will tick breaking.
@@ -108,7 +108,7 @@ public class MiningTask implements Runnable {
     @Setter
     private boolean enabled = true;
 
-    public MiningTask(Player player, Block block, int hardness, float breakTime) {
+    public MiningTask(Player player, Block block, float hardness, float breakTime) {
         this.player = player;
         this.block = block;
         this.hardness = hardness;
@@ -183,7 +183,7 @@ public class MiningTask implements Runnable {
 
         // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
         // Do calculation for break time based off damage
-        int damage = (counter / (requiredDamage / damagePerTick) * 10);
+        int damage = (int) (counter / (requiredDamage / damagePerTick) * 10);
 
         // Send the damage animation state once for each increment
         // Check damage is not the same for previous tick
