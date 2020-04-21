@@ -12,6 +12,7 @@ package com.illuzionzstudios.custommining.controller;
 
 import com.illuzionzstudios.compatibility.CompatibleMaterial;
 import com.illuzionzstudios.core.bukkit.controller.BukkitController;
+import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.custommining.CustomMining;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -79,12 +80,15 @@ public enum HardnessController implements BukkitController<CustomMining> {
         // Modifiers that always apply
         modifier = ModifierController.INSTANCE.getPotionModifiers(modifier, block, player);
 
+        Logger.debug("Damage: " + modifier);
+        Logger.debug("Hardness Check: " + hardness * 30);
+
         // Check insta breaking
         // Vanilla minecraft method to see if insta breaks
         if (modifier > hardness * 30) return 0f;
 
         // Apply modifiers
-        baseTime /= modifier;
+        baseTime = baseTime / modifier;
 
         // Round to nearest 0.05 like minecraft breaking time
         baseTime = (float) (Math.round(baseTime * 20.0) / 20.0);

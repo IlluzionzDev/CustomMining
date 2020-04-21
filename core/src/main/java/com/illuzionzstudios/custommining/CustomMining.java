@@ -7,7 +7,6 @@ import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.controller.ModifierController;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.scheduler.bukkit.BukkitScheduler;
-import org.bstats.bukkit.Metrics;
 
 import java.util.List;
 

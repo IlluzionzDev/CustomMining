@@ -58,21 +58,9 @@
             <id>maven</id>
             <url>http://192.168.20.16:8081/repository/maven-releases/</url>
         </repository>
-
-        <repository>
-            <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>1.7</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.comphenix</groupId>
             <artifactId>ProtocolLib</artifactId>

@@ -10,6 +10,7 @@
 package com.illuzionzstudios.custommining.controller;
 
 import com.illuzionzstudios.core.bukkit.controller.BukkitController;
+import com.illuzionzstudios.core.util.Logger;
 import com.illuzionzstudios.custommining.CustomMining;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -47,7 +48,7 @@ public enum ModifierController implements BukkitController<CustomMining>  {
      * @return Modifiers from enchant if tool helps
      */
     public float getEnchantmentModifiers(float modifier, Block block, Player player) {
-        ItemStack heldItem = player.getInventory().getItemInHand();
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
 
         // Level of efficiency for modifier checks
         int efficiencyLevel = heldItem.getEnchantmentLevel(Enchantment.DIG_SPEED);
@@ -56,7 +57,9 @@ public enum ModifierController implements BukkitController<CustomMining>  {
         if (efficiencyLevel <= 0) return modifier;
 
         // Formula for vanilla minecraft
-        float efficiencyMultiplier = (efficiencyLevel ^ 2) + 1;
+        float efficiencyMultiplier = (float) ((Math.pow(efficiencyLevel, 2)) + 1);
+
+        Logger.debug("Eff mod: " + efficiencyMultiplier);
 
         // Add modifiers
         return modifier + efficiencyMultiplier;
