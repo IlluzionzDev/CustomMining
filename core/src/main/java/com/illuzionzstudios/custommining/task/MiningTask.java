@@ -236,6 +236,14 @@ public class MiningTask implements Runnable {
     }
 
     /**
+     * @param damage Change damage done per tick
+     */
+    public void setDamagePerTick(float damage) {
+        this.changedBreakTime = this.damagePerTick != damage;
+        this.damagePerTick = damage;
+    }
+
+    /**
      * @return Percent of task completed
      */
     public float getPercent() {

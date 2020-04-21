@@ -69,17 +69,29 @@ public enum HardnessController implements BukkitController<CustomMining> {
                 (float) (hardness * 1.5) :
                 hardness * 5;
 
-        // Convert base time to ticks
-        float damagePerTick = (int) ((hardness * 30) / breakTime);
-
         // Multipliers only if tool helps
         if (doesToolMultiply(getHeldTool(player), block.getType(), player)) {
-            damagePerTick = getBaseMultiplier(getTier(player), block.getType());
+            breakTime /= getBaseMultiplier(getTier(player), block.getType());
+        }
+
+        // Convert base time to ticks
+        float damagePerTick = (int) (((hardness * 30) * 20) / breakTime);
+
+        if (doesToolMultiply(getHeldTool(player), block.getType(), player)) {
             damagePerTick = ModifierController.INSTANCE.getEnchantmentModifiers(damagePerTick, block, player);
         }
 
         // Modifiers that always apply
         damagePerTick = ModifierController.INSTANCE.getPotionModifiers(damagePerTick, block, player);
+
+        Logger.debug("Damage: " + damagePerTick);
+
+        // Check insta breaking
+        // Vanilla minecraft method to see if insta breaks
+        if (damagePerTick > (hardness * 30) * 20) {
+            Logger.debug("Instabreak");
+            return Integer.MAX_VALUE;
+        }
 
         return damagePerTick;
     }
