@@ -75,6 +75,12 @@ public class MiningTask implements Runnable {
     private float percent = 0;
 
     /**
+     * Stored to track last damage
+     * animation
+     */
+    private int lastDamageStep = 0;
+
+    /**
      * This is the required damage required to break
      * the block. This is based off damage by the calculation
      * hardness * 30.
@@ -119,6 +125,8 @@ public class MiningTask implements Runnable {
         // from the amount of total ticks
         // needed
         this.damagePerTick = (int) (requiredDamage / breakTime);
+
+        Logger.debug("Break Time: " + requiredDamage / damagePerTick);
     }
 
     public MiningTask(Player player, Block block, int hardness, int damagePerTick) {
@@ -183,15 +191,17 @@ public class MiningTask implements Runnable {
 
         // Damage is a value 0 to 9 inclusive representing the 10 different damage textures that can be applied to a block
         // Do calculation for break time based off damage
-        int damage = (int) (counter / (requiredDamage / damagePerTick) * 10);
+        int damage = (int) getPercent() / 10;
 
         // Send the damage animation state once for each increment
         // Check damage is not the same for previous tick
-        if (damage != (counter == 0 ? -1 : ((counter - 1) / (requiredDamage / damagePerTick) * 10))) {
+        if (damage != (counter == 0 ? -1 : lastDamageStep)) {
             // Auto gets who to send animation to based on settings
             MiningController.INSTANCE.handler.sendBlockBreak(block, damage, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
         }
 
+        // Update old
+        lastDamageStep = damage;
         counter++;
 
         // Reached break time
