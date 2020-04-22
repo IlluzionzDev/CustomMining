@@ -66,12 +66,13 @@ public enum ModifierController implements BukkitController<CustomMining>  {
     /**
      * Get modifiers for potions effects on the player
      *
-     * @param modifier The base modifier already
+     * @param modifier The base modifier
      * @param block The blocking being mined
      * @param player The player mining the block
      * @return Modifiers from potion effects
      */
     public float getPotionModifiers(float modifier, Block block, Player player) {
+
 
         // Potions to check
         PotionEffect haste = player.getPotionEffect(PotionEffectType.FAST_DIGGING);
@@ -82,10 +83,13 @@ public enum ModifierController implements BukkitController<CustomMining>  {
             int level = haste.getAmplifier();
 
             // Increase by formula
-            int increaseBy = (20 * level) / 100;
+            float increaseBy = ((float) 20 * level) / 100;
 
-            // Increase by percentage
-            modifier *= increaseBy + 1;
+            // Minus the percent of that to reduce
+            modifier += modifier * increaseBy;
+
+            Logger.debug("Haste Level: " + level);
+            Logger.debug("IncreaseBy: " + increaseBy);
         }
 
         // Fatigue check
@@ -103,9 +107,6 @@ public enum ModifierController implements BukkitController<CustomMining>  {
                     decreaseBy = 0.91f;
                 case 3:
                     decreaseBy = 0.9973f;
-                default:
-                    // For all other
-                    decreaseBy = 0.99919f;
             }
 
             // Get that percent of modifier, and take it from it
