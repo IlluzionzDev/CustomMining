@@ -59,8 +59,6 @@ public enum ModifierController implements BukkitController<CustomMining>  {
         // Formula for vanilla minecraft
         float efficiencyMultiplier = (float) ((Math.pow(efficiencyLevel, 2)) + 1);
 
-        Logger.debug("Eff mod: " + efficiencyMultiplier);
-
         // Add modifiers
         return modifier + efficiencyMultiplier;
     }
