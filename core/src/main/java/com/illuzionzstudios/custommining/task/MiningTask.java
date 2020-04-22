@@ -190,7 +190,7 @@ public class MiningTask implements Runnable {
 
         // Update local percentage
         if (this.percent != p)
-        this.percent = p;
+            this.percent = p;
         return p;
     }
 

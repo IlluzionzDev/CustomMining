@@ -188,11 +188,6 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 return;
             }
 
-            // Break time less than 0 so don't break, unbreakable
-            if (HardnessController.INSTANCE.processFinalBreakTime(block, player) < 0.0) {
-                return;
-            }
-
             MiningTask previous = null;
 
             // Detect if the block was being mined, so resume it

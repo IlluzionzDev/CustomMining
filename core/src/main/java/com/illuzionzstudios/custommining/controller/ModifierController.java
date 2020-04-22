@@ -60,7 +60,7 @@ public enum ModifierController implements BukkitController<CustomMining>  {
         float efficiencyMultiplier = (float) ((Math.pow(efficiencyLevel, 2)) + 1);
 
         // Add modifiers as decimal percent
-        return modifier + (efficiencyMultiplier / 100);
+        return modifier + efficiencyMultiplier;
     }
 
     /**
