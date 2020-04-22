@@ -63,35 +63,32 @@ public enum HardnessController implements BukkitController<CustomMining> {
         // Hardness calculations
         float hardness = MiningController.INSTANCE.handler.getDefaultBlockHardness(block);
 
-        // Base time in seconds based on if tool helps
-        float baseTime = doesToolHelp(getHeldTool(player), block.getType(), player) ?
-                (float) (hardness * 1.5) :
-                hardness * 5;
-
         // This is the percent to decrease the time by
-        float modifierPercent = 1;
+        float speed = 1;
 
         // Multipliers only if tool helps
         if (doesToolMultiply(getHeldTool(player), block.getType(), player)) {
             // Parse through methods to increase or decrease
-            modifierPercent = getBaseMultiplier(getTier(player), block.getType());
-            modifierPercent = ModifierController.INSTANCE.getEnchantmentModifiers(modifierPercent, block, player);
+            speed = getBaseMultiplier(getTier(player), block.getType());
+            speed = ModifierController.INSTANCE.getEnchantmentModifiers(speed, block, player);
         }
 
         // Modifiers that always apply
-        modifierPercent = ModifierController.INSTANCE.getPotionModifiers(modifierPercent, block, player);
+        speed = ModifierController.INSTANCE.getPotionModifiers(speed, block, player);
 
-        // Here we decrease by the percent as a decimal value
-        baseTime /= modifierPercent;
+        // Calculate damage per tick to calculate break
+        // speed formula is
+        //
+        // (breakSpeed / hardness) * (1 / (doesToolHelp ? 30 : 100))
+        float damagePerTick = (speed / hardness) * (1 / (float) (doesToolHelp(getHeldTool(player), block.getType(), player) ? 30 : 100));
 
-        // Round to nearest 0.05 like minecraft breaking time
-        baseTime = (float) (Math.round(baseTime * 20.0) / 20.0);
+        // Base time based off percentage
+        float baseTime = (1.0f / damagePerTick);
 
-        Logger.debug("Time: " + baseTime);
-        Logger.debug("Modifier: " + modifierPercent);
+        Logger.debug("Time: " + baseTime / 20);
 
         // Change to ticks
-        return baseTime * 20;
+        return baseTime;
     }
 
     /**
