@@ -68,30 +68,27 @@ public enum HardnessController implements BukkitController<CustomMining> {
                 (float) (hardness * 1.5) :
                 hardness * 5;
 
-        // The modifier to apply
-        float modifier = 1;
+        // This is the percent to decrease the time by
+        float modifierPercent = 1;
 
         // Multipliers only if tool helps
         if (doesToolMultiply(getHeldTool(player), block.getType(), player)) {
-            modifier = getBaseMultiplier(getTier(player), block.getType());
-            modifier = ModifierController.INSTANCE.getEnchantmentModifiers(modifier, block, player);
+            // Parse through methods to increase or decrease
+            modifierPercent = getBaseMultiplier(getTier(player), block.getType());
+            modifierPercent = ModifierController.INSTANCE.getEnchantmentModifiers(modifierPercent, block, player);
         }
 
         // Modifiers that always apply
-        modifier = ModifierController.INSTANCE.getPotionModifiers(modifier, block, player);
+        modifierPercent = ModifierController.INSTANCE.getPotionModifiers(modifierPercent, block, player);
 
-        // Check insta breaking
-        // Vanilla minecraft method to see if insta breaks
-        if (modifier > hardness * 30) return 0f;
-
-        // Apply modifiers
-        baseTime /= modifier;
+        // Here we decrease by the percent as a decimal value
+        baseTime /= modifierPercent;
 
         // Round to nearest 0.05 like minecraft breaking time
         baseTime = (float) (Math.round(baseTime * 20.0) / 20.0);
 
         Logger.debug("Time: " + baseTime);
-        Logger.debug("Modifier: " + modifier);
+        Logger.debug("Modifier: " + modifierPercent);
 
         // Change to ticks
         return baseTime * 20;
