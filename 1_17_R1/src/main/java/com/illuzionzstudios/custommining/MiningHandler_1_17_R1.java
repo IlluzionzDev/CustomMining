@@ -7,16 +7,12 @@ import net.minecraft.resources.MinecraftKey;
 import net.minecraft.sounds.SoundEffect;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectList;
-import net.minecraft.world.level.World;
 import net.minecraft.world.level.block.SoundEffectType;
 import net.minecraft.world.level.block.state.BlockBase;
 import net.minecraft.world.level.block.state.IBlockData;
-import org.bukkit.Effect;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
@@ -28,30 +24,6 @@ import java.util.List;
 import java.util.Random;
 
 public class MiningHandler_1_17_R1 implements MiningHandler {
-
-    /**
-     * Break sound of block
-     */
-    private static Field breakSound;
-
-    /**
-     * Minecraft key
-     */
-    private static Field minecraftKey;
-
-    static {
-        try {
-            breakSound = SoundEffectType.class.getDeclaredField("aA");
-            breakSound.setAccessible(true);
-
-            minecraftKey = SoundEffect.class.getDeclaredField("b");
-            minecraftKey.setAccessible(true);
-
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void sendBlockBreak(org.bukkit.block.Block block, int damage, Player... players) {
@@ -79,6 +51,7 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
 
     @Override
     public float getDefaultBlockHardness(org.bukkit.block.Block block) {
+        // We have to go into block info to get hardness
         try {
             Field info = BlockBase.class.getDeclaredField("aP");
             info.setAccessible(true);
@@ -92,6 +65,7 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
         } catch (Exception e){
             e.printStackTrace();
         }
+        // Couldn't get hardness so it's unbreakable
         return -1f;
     }
 
