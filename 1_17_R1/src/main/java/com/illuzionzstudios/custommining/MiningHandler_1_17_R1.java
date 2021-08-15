@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectList;
 import net.minecraft.world.level.World;
 import net.minecraft.world.level.block.SoundEffectType;
+import net.minecraft.world.level.block.state.IBlockData;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -71,7 +72,7 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
 
     @Override
     public void cancelClientBreaking(Player player) {
-        PacketPlayOutEntityEffect eff = new PacketPlayOutEntityEffect(player.getEntityId(), new MobEffect(MobEffectList.fromId(4), 255, Integer.MAX_VALUE, true, true));
+        PacketPlayOutEntityEffect eff = new PacketPlayOutEntityEffect(player.getEntityId(), new MobEffect(MobEffectList.fromId(4), 255, Integer.MAX_VALUE, true, false));
         ((CraftPlayer) player).getHandle().b.sendPacket(eff);
     }
 
@@ -93,18 +94,22 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
 
     @Override
     public void playBreakEffect(org.bukkit.block.Block block) {
-//        block.getWorld().spawnParticle(Particle.BLOCK_CRACK, block.getLocation().add(0.5, 0.5, 0.5),
-//                new Random().nextInt(20) + 10,
-//                0.25, 0.25, 0.25, Material.BEDROCK.createBlockData());
+        block.getWorld().spawnParticle(Particle.BLOCK_CRACK, block.getLocation().add(0.5, 0.5, 0.5),
+                new Random().nextInt(20) + 10,
+                0.5, 0.5, 0.5, block.getBlockData());
+
         try {
-            net.minecraft.world.level.block.Block nmsBlock = ((CraftBlock) block).getNMS().getBlock();
-            SoundEffectType soundEffectType = nmsBlock.getStepSound(nmsBlock.getBlockData());
-            MinecraftKey minecraftKey = soundEffectType.getPlaceSound().a();
+            IBlockData nmsBlock = ((CraftBlock) block).getNMS();
+            SoundEffectType soundEffectType = nmsBlock.getStepSound();
+
+            Field breakSound = SoundEffectType.class.getDeclaredField("aA");
+            breakSound.setAccessible(true);
+            SoundEffect nmsSound = (SoundEffect) breakSound.get(soundEffectType);
+            MinecraftKey minecraftKey = nmsSound.a();
             String soundName = minecraftKey.getKey();
-            System.out.println("Sound: " + soundName);
             soundName = soundName.toUpperCase().replaceAll("\\.", "_");
 
-            block.getWorld().playSound(block.getLocation(), Sound.valueOf(soundName), 1, 1);
+            block.getWorld().playSound(block.getLocation(), Sound.valueOf(soundName), 1, 0.5f);
         } catch (Exception e){
             e.printStackTrace();
         }

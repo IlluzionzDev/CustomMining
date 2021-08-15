@@ -69,11 +69,8 @@ public enum ModifierController implements PluginController<CustomMining> {
 
             // Formula
             modifier *= 1 + (0.2 * level);
-
-            Logger.debug("Haste Level: " + level);
         }
 
-        Logger.debug("No Fatigue Check");
         // TODO: It picks up on client side fatigue
 //        // Fatigue check
 //        if (fatigue != null) {

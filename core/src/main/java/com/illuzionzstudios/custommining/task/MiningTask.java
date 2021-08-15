@@ -158,6 +158,8 @@ public class MiningTask implements Runnable {
             MinecraftScheduler.get().synchronize(() -> {
                 MiningController.INSTANCE.breakBlock(player, block);
             });
+            // Disable so stops ticking
+            setEnabled(false);
         }
     }
 

@@ -317,8 +317,8 @@ public enum MiningController implements PluginController<CustomMining>, Listener
         // Make sure to cancel tasks when breaking any block
         cancelBreaking(block);
 
-        // Actually break the block
-        block.setType(Material.AIR);
+        // Block break effect
+        handler.playBreakEffect(block);
         // Drops based on item used
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
 
@@ -327,12 +327,12 @@ public enum MiningController implements PluginController<CustomMining>, Listener
             block.getWorld().dropItem(block.getLocation(), drop);
         });
 
-        // Block break effect
-        handler.playBreakEffect(block);
-
         // Force call block break event
         BlockBreakEvent blockBreak = new BlockBreakEvent(block, player);
         Bukkit.getPluginManager().callEvent(blockBreak);
+
+        // Actually break the block
+        block.setType(Material.AIR);
     }
 
     /**
