@@ -56,10 +56,12 @@ public enum HardnessController implements PluginController<CustomMining> {
         float speed = 1;
 
         // Multipliers only if tool helps
-        if (MiningController.INSTANCE.getHandler().canDestroyBlock(player.getInventory().getItemInMainHand(), block)) {
+        if (block.isPreferredTool(player.getInventory().getItemInMainHand())) {
             // Parse through methods to increase or decrease
             speed = MiningController.INSTANCE.getHandler().getBaseMultiplier(player.getInventory().getItemInMainHand(), block);
-            speed = ModifierController.INSTANCE.getEnchantmentModifiers(speed, player);
+            // Only use enchants if can destroy block
+            if (MiningController.INSTANCE.getHandler().canDestroyBlock(player.getInventory().getItemInMainHand(), block))
+                speed = ModifierController.INSTANCE.getEnchantmentModifiers(speed, player);
         }
 
         // Modifiers that always apply
@@ -68,9 +70,12 @@ public enum HardnessController implements PluginController<CustomMining> {
         // TODO: Modifiers if inWater and not onGround
 
         // Calculate damage per tick to calculate break
-        // speed formula is
         // (breakSpeed / hardness) * (1 / (doesToolHelp ? 30 : 100))
-        float damagePerTick = (speed / hardness) * (1 / (float) (MiningController.INSTANCE.getHandler().canDestroyBlock(player.getInventory().getItemInMainHand(), block) ? 30 : 100));
+        float damagePerTick = (speed / hardness) * (1 / (float) (block.isPreferredTool(player.getInventory().getItemInMainHand()) ? 30 : 100));
+
+        // Insta break
+        if (damagePerTick > 1)
+            return 0;
 
         // Base time based off percentage (ticks)
         float baseTime = (float) Math.ceil(1.0f / damagePerTick);

@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectList;
 import net.minecraft.world.level.World;
 import net.minecraft.world.level.block.SoundEffectType;
+import net.minecraft.world.level.block.state.BlockBase;
 import net.minecraft.world.level.block.state.IBlockData;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -78,8 +79,20 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
 
     @Override
     public float getDefaultBlockHardness(org.bukkit.block.Block block) {
-        System.out.println("Hardness: " + CraftMagicNumbers.getBlock(block.getType()).getDurability());
-        return CraftMagicNumbers.getBlock(block.getType()).getDurability();
+        try {
+            Field info = BlockBase.class.getDeclaredField("aP");
+            info.setAccessible(true);
+            BlockBase.Info blockInfo = (BlockBase.Info) info.get(((CraftBlock) block).getNMS().getBlock());
+
+            Field strengthField = BlockBase.Info.class.getDeclaredField("g");
+            strengthField.setAccessible(true);
+            float strength = (float) strengthField.get(blockInfo);
+            System.out.println("Hardness: " + strength);
+            return strength;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return -1f;
     }
 
     @Override
@@ -95,8 +108,8 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
     @Override
     public void playBreakEffect(org.bukkit.block.Block block) {
         block.getWorld().spawnParticle(Particle.BLOCK_CRACK, block.getLocation().add(0.5, 0.5, 0.5),
-                new Random().nextInt(20) + 10,
-                0.5, 0.5, 0.5, block.getBlockData());
+                50,
+                0.3, 0.3, 0.3, block.getBlockData());
 
         try {
             IBlockData nmsBlock = ((CraftBlock) block).getNMS();
@@ -109,7 +122,7 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
             String soundName = minecraftKey.getKey();
             soundName = soundName.toUpperCase().replaceAll("\\.", "_");
 
-            block.getWorld().playSound(block.getLocation(), Sound.valueOf(soundName), 1, 0.5f);
+            block.getWorld().playSound(block.getLocation(), Sound.valueOf(soundName), 1, 0.75f);
         } catch (Exception e){
             e.printStackTrace();
         }

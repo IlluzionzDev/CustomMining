@@ -23,6 +23,7 @@ import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,6 +33,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
@@ -320,12 +322,12 @@ public enum MiningController implements PluginController<CustomMining>, Listener
         // Block break effect
         handler.playBreakEffect(block);
         // Drops based on item used
-        Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
+        block.breakNaturally(player.getInventory().getItemInMainHand());
 
-        // Drop all drops
-        drops.forEach(drop -> {
-            block.getWorld().dropItem(block.getLocation(), drop);
-        });
+        // Use durability on item (account for unbreaking)
+        int durabilityLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.DURABILITY);
+        if (Math.random() <= (1 / (float)(durabilityLevel + 1)))
+            player.getInventory().getItemInMainHand().setDurability((short) (player.getInventory().getItemInMainHand().getDurability() + 1));
 
         // Force call block break event
         BlockBreakEvent blockBreak = new BlockBreakEvent(block, player);
