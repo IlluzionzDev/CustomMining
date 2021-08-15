@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +20,23 @@ import java.util.Collections;
  */
 @Getter
 public class MiningTask implements Runnable {
+
+    /**
+     * Player breaking the block. If player is null this task
+     * has no player and is code controlled
+     */
+    @Nullable
+    private final Player player;
+
+    /**
+     * The block we are currently breaking
+     */
+    private final Block block;
+
+    /**
+     * Ticks task is alive
+     */
+    private int totalTicks = 0;
 
     /**
      * Used to handle ticking the block break
@@ -35,34 +53,19 @@ public class MiningTask implements Runnable {
     private int elapsedTicks = 0;
 
     /**
-     * Ticks task is alive
-     */
-    private int totalTicks = 0;
-
-    /**
      * Last damage number used for comparing
      * to avoid resetting progress
      */
     private int lastDamage = 0;
 
     /**
-     * Our task ID to identify the task
+     * Our task ID to identify the task (bukkit runnable)
      */
     @Setter
     private int taskID;
 
     /**
-     * Player breaking the block
-     */
-    private final Player player;
-
-    /**
-     * The block we are currently breaking
-     */
-    private final Block block;
-
-    /**
-     * If the break time changed so we can update logic
+     * Internal flag if the break time changed so we can update logic
      */
     private boolean changedBreakTime;
 
@@ -74,7 +77,8 @@ public class MiningTask implements Runnable {
 
     /**
      * Percent complete of task
-     * Used for scaling
+     * Used for scaling. Can be set to a certain percentage
+     * and continue mining from there
      */
     private float percent = 0;
 
@@ -85,7 +89,7 @@ public class MiningTask implements Runnable {
     @Setter
     private boolean enabled = true;
 
-    public MiningTask(Player player, Block block, float breakTime) {
+    public MiningTask(@Nullable Player player, Block block, float breakTime) {
         this.player = player;
         this.block = block;
         this.breakTime = breakTime;

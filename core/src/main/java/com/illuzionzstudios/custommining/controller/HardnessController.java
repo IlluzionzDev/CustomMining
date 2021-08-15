@@ -67,7 +67,8 @@ public enum HardnessController implements PluginController<CustomMining> {
         // Modifiers that always apply
         speed = ModifierController.INSTANCE.getPotionModifiers(speed, player);
 
-        // TODO: Modifiers if inWater and not onGround
+        // Modifiers for in water (no aqua infinity) and not on ground
+        speed = ModifierController.INSTANCE.getWaterGroundModifiers(speed, player);
 
         // Calculate damage per tick to calculate break
         // (breakSpeed / hardness) * (1 / (doesToolHelp ? 30 : 100))
@@ -77,12 +78,7 @@ public enum HardnessController implements PluginController<CustomMining> {
         if (damagePerTick > 1)
             return 0;
 
-        // Base time based off percentage (ticks)
-        float baseTime = (float) Math.ceil(1.0f / damagePerTick);
-
-        Logger.debug("Time: " + baseTime / 20);
-
         // Change to ticks
-        return baseTime;
+        return (float) Math.ceil(1.0f / damagePerTick);
     }
 }

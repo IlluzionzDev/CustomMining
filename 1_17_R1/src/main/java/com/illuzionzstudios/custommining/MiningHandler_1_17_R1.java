@@ -10,6 +10,7 @@ import net.minecraft.world.effect.MobEffectList;
 import net.minecraft.world.level.block.SoundEffectType;
 import net.minecraft.world.level.block.state.BlockBase;
 import net.minecraft.world.level.block.state.IBlockData;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -60,7 +61,6 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
             Field strengthField = BlockBase.Info.class.getDeclaredField("g");
             strengthField.setAccessible(true);
             float strength = (float) strengthField.get(blockInfo);
-            System.out.println("Hardness: " + strength);
             return strength;
         } catch (Exception e){
             e.printStackTrace();
@@ -81,6 +81,9 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
 
     @Override
     public void playBreakEffect(org.bukkit.block.Block block) {
+        // Will produce weird effects
+        if (block.getType() == Material.AIR) return;
+
         block.getWorld().spawnParticle(Particle.BLOCK_CRACK, block.getLocation().add(0.5, 0.5, 0.5),
                 50,
                 0.3, 0.3, 0.3, block.getBlockData());
