@@ -1,7 +1,0 @@
-# General Messages
-
-general:
-  nametag:
-    prefix: '&b&lCustomMining &8»&7'
-  nopermission: '&cNot enough permissions'
-  reload: '&7Reloaded all configuration files'

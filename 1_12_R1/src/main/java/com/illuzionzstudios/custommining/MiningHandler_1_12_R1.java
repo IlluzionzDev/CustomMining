@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -57,6 +58,16 @@ public class MiningHandler_1_12_R1 implements MiningHandler {
 
         // Pass some values, it only returns the hardness so idk what these args are for
         return nmsBlock.a(nmsBlock.getBlockData(), (World) block.getWorld(), new BlockPosition(block.getX(), block.getY(), block.getZ()));
+    }
+
+    @Override
+    public float getBaseMultiplier(ItemStack item, org.bukkit.block.Block block) {
+        return 0;
+    }
+
+    @Override
+    public boolean canDestroyBlock(ItemStack item, org.bukkit.block.Block block) {
+        return false;
     }
 
     @Override

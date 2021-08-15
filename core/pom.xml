@@ -12,6 +12,20 @@
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Maven Plugin Repository</name>
+            <url>http://repo1.maven.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <finalName>CustomMining-${project.version}</finalName>
 
@@ -19,16 +33,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.7.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -38,6 +52,12 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.illuzionzstudios.mist</pattern>
+                            <shadedPattern>com.illuzionzstudios.custommining.mist</shadedPattern>
+                        </relocation>
+                    </relocations>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <shadedArtifactAttached>false</shadedArtifactAttached>
                     <minimizeJar>true</minimizeJar>
@@ -55,42 +75,54 @@
 
     <repositories>
         <repository>
-            <id>maven</id>
-            <url>http://192.168.20.16:8081/repository/maven-releases/</url>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>com.comphenix</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>1.0</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.7.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.illuzionzstudios</groupId>
             <artifactId>impl</artifactId>
             <version>${parent.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.illuzionzstudios</groupId>
             <artifactId>1_12_R1</artifactId>
             <version>${parent.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.illuzionzstudios</groupId>
             <artifactId>1_13_R2</artifactId>
             <version>${parent.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.illuzionzstudios</groupId>
             <artifactId>1_14_R1</artifactId>
             <version>${parent.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.illuzionzstudios</groupId>
             <artifactId>1_15_R1</artifactId>
@@ -100,29 +132,15 @@
 
         <dependency>
             <groupId>com.illuzionzstudios</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0</version>
+            <artifactId>1_17_R1</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.illuzionzstudios</groupId>
-            <artifactId>command</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.illuzionzstudios</groupId>
-            <artifactId>ui</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.illuzionzstudios</groupId>
-            <artifactId>scheduler</artifactId>
-            <version>1.0</version>
+            <artifactId>Mist</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

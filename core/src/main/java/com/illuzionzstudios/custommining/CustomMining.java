@@ -1,44 +1,53 @@
 package com.illuzionzstudios.custommining;
 
-import com.illuzionzstudios.config.Config;
-import com.illuzionzstudios.core.plugin.IlluzionzPlugin;
 import com.illuzionzstudios.custommining.controller.HardnessController;
 import com.illuzionzstudios.custommining.controller.MiningController;
 import com.illuzionzstudios.custommining.controller.ModifierController;
+import com.illuzionzstudios.custommining.settings.MiningLocale;
 import com.illuzionzstudios.custommining.settings.Settings;
-import com.illuzionzstudios.scheduler.bukkit.BukkitScheduler;
+import com.illuzionzstudios.mist.config.PluginSettings;
+import com.illuzionzstudios.mist.config.locale.PluginLocale;
+import com.illuzionzstudios.mist.plugin.SpigotPlugin;
+import com.illuzionzstudios.mist.util.Metrics;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
+import java.util.Objects;
 
-/**
- * Copyright © 2020 Property of Illuzionz Studios, LLC
- * All rights reserved. No part of this publication may be reproduced, distributed, or
- * transmitted in any form or by any means, including photocopying, recording, or other
- * electronic or mechanical methods, without the prior written permission of the publisher,
- * except in the case of brief quotations embodied in critical reviews and certain other
- * noncommercial uses permitted by copyright law. Any licensing of this software overrides
- * this statement.
- */
+public final class CustomMining extends SpigotPlugin {
 
-public final class CustomMining extends IlluzionzPlugin {
+    /**
+     * Singleton instance of our {@link SpigotPlugin}
+     */
+    private static volatile CustomMining INSTANCE;
 
-    private static CustomMining INSTANCE;
-
+    /**
+     * Return our instance of the {@link SpigotPlugin}
+     * <p>
+     * Should be overridden in your own {@link SpigotPlugin} class
+     * as a way to implement your own methods per plugin
+     *
+     * @return This instance of the plugin
+     */
     public static CustomMining getInstance() {
+        // Assign if null
+        if (INSTANCE == null) {
+            INSTANCE = JavaPlugin.getPlugin(CustomMining.class);
+
+            Objects.requireNonNull(INSTANCE, "Cannot create instance of plugin. Did you reload?");
+        }
+
         return INSTANCE;
     }
 
     public void onPluginLoad() {
-        INSTANCE = this;
+    }
+
+    @Override
+    public void onPluginPreEnable() {
+
     }
 
     public void onPluginEnable() {
-        // Load all settings and language
-        Settings.loadSettings();
-        this.setLocale(Settings.LANGUGE_MODE.getString(), false);
-
-        new BukkitScheduler(this).initialize();
-
         // Load controllers
         ModifierController.INSTANCE.initialize(this);
         HardnessController.INSTANCE.initialize(this);
@@ -46,7 +55,7 @@ public final class CustomMining extends IlluzionzPlugin {
 
         // Metrics
         int pluginId = 7248;
-        Metrics metrics = new Metrics(this, pluginId);
+        new Metrics(this, pluginId);
     }
 
     public void onPluginDisable() {
@@ -55,23 +64,33 @@ public final class CustomMining extends IlluzionzPlugin {
         MiningController.INSTANCE.stop(this);
     }
 
-    public void onConfigReload() {
-        // Load all settings and language
-        Settings.loadSettings();
-        this.setLocale(Settings.LANGUGE_MODE.getString(), true);
-    }
+    @Override
+    public void onPluginPreReload() {
 
-    public List<Config> getExtraConfig() {
-        return null;
     }
 
     @Override
-    public String getPluginName() {
-        return "CustomMining";
+    public void onPluginReload() {
+
     }
 
     @Override
-    public String getPluginVersion() {
-        return "1.0";
+    public void onReloadablesStart() {
+
+    }
+
+    @Override
+    public PluginSettings getPluginSettings() {
+        return new Settings(this);
+    }
+
+    @Override
+    public PluginLocale getPluginLocale() {
+        return new MiningLocale(this);
+    }
+
+    @Override
+    public int getPluginId() {
+        return 0;
     }
 }

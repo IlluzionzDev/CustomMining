@@ -1,24 +1,14 @@
 package com.illuzionzstudios.custommining;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 /**
- * Copyright © 2020 Property of Illuzionz Studios, LLC
- * All rights reserved. No part of this publication may be reproduced, distributed, or
- * transmitted in any form or by any means, including photocopying, recording, or other
- * electronic or mechanical methods, without the prior written permission of the publisher,
- * except in the case of brief quotations embodied in critical reviews and certain other
- * noncommercial uses permitted by copyright law. Any licensing of this software overrides
- * this statement.
- */
-
-/**
  * Handle custom methods with packets to simulate
- * the custom mining system
+ * the custom mining system. Things that also utilise NMS items
  */
 public interface MiningHandler {
 
@@ -57,6 +47,26 @@ public interface MiningHandler {
     float getDefaultBlockHardness(org.bukkit.block.Block block);
 
     /**
+     * Get's the base multiplier of an Item (Tool usually) on a block. This is taken
+     * from the #getDestroySpeed(ItemStack item, IBlockData block) method in NMS, which gives
+     * the base destroy multiplier based on the block and item
+     *
+     * @param item The item trying to use
+     * @param block The data of the block
+     * @return The base multiplier
+     */
+    float getBaseMultiplier(org.bukkit.inventory.ItemStack item, Block block);
+
+    /**
+     * Checks if an item can destroy a block (is the appropriate tool for it)
+     *
+     * @param item The item being used
+     * @param block The block checking
+     * @return If is the right tool
+     */
+    boolean canDestroyBlock(org.bukkit.inventory.ItemStack item, Block block);
+
+    /**
      * Play the breaking effect for a block.
      * This includes the breaking particles
      * and the breaking sound.
@@ -64,5 +74,12 @@ public interface MiningHandler {
      * @param block Block to play effects for
      */
     void playBreakEffect(org.bukkit.block.Block block);
+
+    /**
+     * Used for a custom id based off block
+     */
+    default int getBlockEntityId(org.bukkit.block.Block block){
+        return ((block.getX() & 0xFFF) << 20 | (block.getZ() & 0xFFF) << 8) | (block.getY() & 0xFF);
+    }
 
 }

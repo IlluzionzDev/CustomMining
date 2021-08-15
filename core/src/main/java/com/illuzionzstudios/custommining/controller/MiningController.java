@@ -8,16 +8,15 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.illuzionzstudios.compatibility.ServerVersion;
-import com.illuzionzstudios.core.bukkit.controller.BukkitController;
-import com.illuzionzstudios.core.util.Logger;
-import com.illuzionzstudios.core.util.PlayerUtil;
 import com.illuzionzstudios.custommining.*;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.custommining.task.MiningTask;
-import com.illuzionzstudios.scheduler.MinecraftScheduler;
-import com.illuzionzstudios.scheduler.sync.Async;
-import com.illuzionzstudios.scheduler.sync.Rate;
+import com.illuzionzstudios.mist.Logger;
+import com.illuzionzstudios.mist.compatibility.ServerVersion;
+import com.illuzionzstudios.mist.controller.PluginController;
+import com.illuzionzstudios.mist.scheduler.MinecraftScheduler;
+import com.illuzionzstudios.mist.scheduler.rate.Async;
+import com.illuzionzstudios.mist.scheduler.rate.Rate;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -38,32 +37,20 @@ import org.bukkit.scheduler.BukkitScheduler;
 import java.util.*;
 
 /**
- * Copyright © 2020 Property of Illuzionz Studios, LLC
- * All rights reserved. No part of this publication may be reproduced, distributed, or
- * transmitted in any form or by any means, including photocopying, recording, or other
- * electronic or mechanical methods, without the prior written permission of the publisher,
- * except in the case of brief quotations embodied in critical reviews and certain other
- * noncommercial uses permitted by copyright law. Any licensing of this software overrides
- * this statement.
- */
-
-/**
  * This is the core class that handles the full mining system.
  * From here it will branch out to other classes to handle other sub
  * features. But here is the super of all mining
  */
-public enum MiningController implements BukkitController<CustomMining>, Listener {
+public enum MiningController implements PluginController<CustomMining>, Listener {
     INSTANCE;
 
     /**
      * Our custom handler to handle NMS packets
      * between versions
      */
-    public MiningHandler handler;
-    /**
-     * Instance of our main plugin
-     */
-    private CustomMining plugin;
+    @Getter
+    private MiningHandler handler;
+
     /**
      * Scheduler for block breaking
      */
@@ -89,23 +76,22 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
 
     @Override
     public void initialize(CustomMining plugin) {
-
-        this.plugin = plugin;
-
         // Setup handler
-        if (ServerVersion.isServerVersion(ServerVersion.V1_12)) {
+        if (ServerVersion.equals(ServerVersion.V.v1_12)) {
             this.handler = new MiningHandler_1_12_R1();
-        } else if (ServerVersion.isServerVersion(ServerVersion.V1_13)) {
+        } else if (ServerVersion.equals(ServerVersion.V.v1_13)) {
             this.handler = new MiningHandler_1_13_R2();
-        } else if (ServerVersion.isServerVersion(ServerVersion.V1_14)) {
+        } else if (ServerVersion.equals(ServerVersion.V.v1_14)) {
             this.handler = new MiningHandler_1_14_R1();
-        } else if (ServerVersion.isServerVersion(ServerVersion.V1_15)) {
+        } else if (ServerVersion.equals(ServerVersion.V.v1_15)) {
             this.handler = new MiningHandler_1_15_R1();
+        } else if (ServerVersion.equals(ServerVersion.V.v1_17)) {
+            this.handler = new MiningHandler_1_17_R1();
         }
 
         // If NMS not handled, not available on server
         if (this.handler == null) {
-            Logger.severe("Not supported on your server version " + ServerVersion.getServerVersionString());
+            Logger.severe("Not supported on your server version " + ServerVersion.getServerVersion());
             Bukkit.getPluginManager().disablePlugin(plugin);
             return;
         }
@@ -155,7 +141,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        // Instabreak when in creative so skip entirely
+        // Insta break when in creative so skip entirely
         if (player.getGameMode() == GameMode.CREATIVE) return;
 
         // Make sure it doesn't give null when block is air
@@ -178,7 +164,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
 
             // Here handle the break time based on conditions
 
-            // Here breaktime is 0, so we just insta break
+            // Here break time is 0, so we just insta break
             // Also check default block hardness because can't change
             // break time of default insta breaks
             if ((HardnessController.INSTANCE.processFinalBreakTime(block, player) >= 0 &&
@@ -192,7 +178,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
 
             // Detect if the block was being mined, so resume it
             // only if set in settings
-            if (Settings.SAVE_PROGRESS.getBoolean()) {
+            if (Settings.MINING_SAVE_PROGRESS.getBoolean()) {
                 previous = resumeBreaking(player, block);
             }
 
@@ -208,7 +194,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 MiningTask task = new MiningTask(player, block, HardnessController.INSTANCE.processFinalBreakTime(block, player));
 
                 // Do task async, will handle minecraft things sync
-                int taskID = scheduler.scheduleAsyncRepeatingTask(plugin, task, 0L, 1L);
+                int taskID = scheduler.scheduleAsyncRepeatingTask(CustomMining.getInstance(), task, 0L, 1L);
                 task.setTaskID(taskID);
 
                 // Here we add the breaking to the tasks
@@ -235,13 +221,20 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
      */
     public void pauseBreaking(Player player, Block block) {
         // If they don't save progress just delete the task
-        if (!Settings.SAVE_PROGRESS.getBoolean()) {
+        if (!Settings.MINING_SAVE_PROGRESS.getBoolean()) {
             cancelBreaking(block);
             return;
         }
 
         if (!miningTasks.containsKey(player.getUniqueId())) return;
         miningTasks.get(player.getUniqueId()).forEach(task -> {
+            // If task doesn't exist
+            if (task == null) {
+                // Abort all tasks
+                miningTasks.remove(player.getUniqueId());
+                return;
+            }
+
             if (task.getBlock().getLocation().equals(block.getLocation())) {
                 task.setEnabled(false);
             }
@@ -288,20 +281,22 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                     Optional<MiningTask> taskStream = list.stream().filter(miningTask -> miningTask.getBlock().getLocation().equals(block.getLocation())).findFirst();
 
                     // If no task simply return because we don't need to do anything else
-                    if (!taskStream.isPresent()) return;
+                    if (taskStream.isEmpty()) return;
 
                     // Finally assign found task to our instanced task
                     MiningTask task = taskStream.get();
 
                     // Cancel mining task
                     scheduler.cancelTask(task.getTaskID());
+                    // Remove task from player's running tasks
                     list.remove(task);
+                    // Send final animation
+                    handler.sendBlockBreak(block, 10, Settings.MINING_BROADCAST_ANIMATION.getBoolean() ? new ArrayList<>(Bukkit.getOnlinePlayers()) : Collections.singletonList(player));
                     if (list.isEmpty()) {
-                        // Their tasks now empty so remove
+                        // No more mining tasks so remove from map
                         miningTasks.remove(player.getUniqueId());
-                        handler.sendBlockBreak(block, 10, Settings.BROADCAST_ANIMATION.getBoolean() ? PlayerUtil.getPlayers() : Collections.singletonList(player));
                     } else {
-                        // Otherwise just update list with removed task
+                        // Otherwise just update map with one less task
                         miningTasks.put(player.getUniqueId(), list);
                     }
                 }
@@ -324,6 +319,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
 
         // Actually break the block
         block.setType(Material.AIR);
+        // Drops based on item used
         Collection<ItemStack> drops = block.getDrops(player.getInventory().getItemInMainHand());
 
         // Drop all drops
@@ -343,8 +339,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
      * Registers protocols through ProtocolLib to cancel block breaking while looking away
      */
     public void registerProtocols() {
-
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Client.BLOCK_DIG) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(CustomMining.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.BLOCK_DIG) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 PacketContainer packet = event.getPacket();
@@ -352,7 +347,7 @@ public enum MiningController implements BukkitController<CustomMining>, Listener
                 if (digType.equals(EnumWrappers.PlayerDigType.ABORT_DESTROY_BLOCK) ||
                         digType.equals(EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK)) {
 
-                    // Loop through abandod block and make sure to stop them all
+                    // Loop through abandoned blocks and make sure to stop them all
                     for (BlockPosition position : packet.getBlockPositionModifier().getValues()) {
                         Block createdBlock = event.getPlayer().getWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
 
