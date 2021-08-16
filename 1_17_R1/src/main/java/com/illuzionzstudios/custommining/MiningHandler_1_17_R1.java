@@ -79,7 +79,7 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
         net.minecraft.world.level.block.Block nmsBlock = ((CraftBlock) block).getNMS().getBlock();
         int exp = nmsBlock.getExpDrop(nmsBlock.getBlockData(), ((CraftWorld) block.getWorld()).getHandle(), new BlockPosition(block.getX(), block.getY(), block.getZ()), CraftItemStack.asNMSCopy(item));
 
-        if (spawnEntity) {
+        if (spawnEntity && exp > 0) {
             EntityExperienceOrb orb = new EntityExperienceOrb(((CraftWorld) block.getWorld()).getHandle(), block.getX(), block.getY(), block.getZ(), exp);
             ((CraftWorld) block.getWorld()).addEntity(orb, CreatureSpawnEvent.SpawnReason.CUSTOM);
         }

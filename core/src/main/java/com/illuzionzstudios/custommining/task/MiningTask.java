@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.BiConsumer;
 
 /**
  * A custom task handling the breaking of blocks. For as long
@@ -89,10 +90,29 @@ public class MiningTask implements Runnable {
     @Setter
     private boolean enabled = true;
 
+    /**
+     * This is the function that runs when this block breaks. By default
+     * is {@link MiningController#breakBlock(Player, Block)}
+     */
+    private final BiConsumer<Player, Block> onBreak;
+
+
+    /**
+     * If no player must implement own onBreak
+     */
+    public MiningTask(Block block, float breakTime, BiConsumer<Player, Block> onBreak) {
+        this(null, block, breakTime, onBreak);
+    }
+
     public MiningTask(@Nullable Player player, Block block, float breakTime) {
+        this(player, block, breakTime, MiningController.INSTANCE::breakBlock);
+    }
+
+    public MiningTask(@Nullable Player player, Block block, float breakTime, BiConsumer<Player, Block> onBreak) {
         this.player = player;
         this.block = block;
         this.breakTime = breakTime;
+        this.onBreak = onBreak;
     }
 
     /**
@@ -126,10 +146,11 @@ public class MiningTask implements Runnable {
             return;
         }
 
-        // If player can't trigger tasks, immediately pause the task
-        // After cleanup checks
-        if (MiningController.INSTANCE.getDisabled().contains(player.getUniqueId())) {
-            return;
+        if (player != null) {
+            // If player can't trigger tasks, immediately pause the task
+            // After cleanup checks
+            if (MiningController.INSTANCE.getDisabled().contains(player.getUniqueId()))
+                return;
         }
 
         // Reset ticks since it was enabled
@@ -149,7 +170,7 @@ public class MiningTask implements Runnable {
         // Send the damage animation state once for each increment
         if (damage != (counter == 0 ? -1 : lastDamage)) {
             // Auto gets who to send animation to based on settings
-            MiningController.INSTANCE.getHandler().sendBlockBreak(block, damage, Settings.MINING_BROADCAST_ANIMATION.getBoolean() ? new ArrayList<>(Bukkit.getOnlinePlayers()) : Collections.singletonList(player));
+            MiningController.INSTANCE.getHandler().sendBlockBreak(block, damage, Settings.MINING_BROADCAST_ANIMATION.getBoolean() || player == null ? new ArrayList<>(Bukkit.getOnlinePlayers()) : Collections.singletonList(player));
         }
 
         // Update last variable
@@ -160,7 +181,7 @@ public class MiningTask implements Runnable {
         if (getPercent() >= 100f) {
             // Handle breaking the block
             MinecraftScheduler.get().synchronize(() -> {
-                MiningController.INSTANCE.breakBlock(player, block);
+                this.onBreak.accept(player, block);
             });
             // Disable so stops ticking
             setEnabled(false);
