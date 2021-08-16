@@ -49,6 +49,11 @@ public class MiningHandler_1_15_R1 implements MiningHandler {
     }
 
     @Override
+    public int getDefaultBlockExp(Block block, ItemStack item, boolean spawnEntity) {
+        return 0;
+    }
+
+    @Override
     public float getBaseMultiplier(ItemStack item, Block block) {
         return 0;
     }

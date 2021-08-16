@@ -1,7 +1,6 @@
 package com.illuzionzstudios.custommining;
 
 import net.minecraft.server.v1_13_R2.*;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_13_R2.util.CraftMagicNumbers;
@@ -45,6 +44,11 @@ public class MiningHandler_1_13_R2 implements MiningHandler {
     @Override
     public float getDefaultBlockHardness(org.bukkit.block.Block block) {
         return CraftMagicNumbers.getBlock(block.getType()).strength;
+    }
+
+    @Override
+    public int getDefaultBlockExp(Block block, ItemStack item, boolean spawnEntity) {
+        return 0;
     }
 
     @Override

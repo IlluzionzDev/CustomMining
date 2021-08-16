@@ -1,8 +1,8 @@
 package com.illuzionzstudios.custommining;
 
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ public interface MiningHandler {
     /**
      * Update the damage texture being displayed on a block
      *
-     * @param block The block to send breaking to
-     * @param damage A param used for which break cycle to display
+     * @param block   The block to send breaking to
+     * @param damage  A param used for which break cycle to display
      * @param players Players to send block break to
      */
     void sendBlockBreak(org.bukkit.block.Block block, int damage, Player... players);
@@ -24,8 +24,8 @@ public interface MiningHandler {
     /**
      * Update the damage texture being displayed on a block
      *
-     * @param block The block to send breaking to
-     * @param damage A param used for which break cycle to display
+     * @param block   The block to send breaking to
+     * @param damage  A param used for which break cycle to display
      * @param players Players to send block break to
      */
     void sendBlockBreak(org.bukkit.block.Block block, int damage, List<Player> players);
@@ -47,11 +47,20 @@ public interface MiningHandler {
     float getDefaultBlockHardness(org.bukkit.block.Block block);
 
     /**
+     * Get the default amount of exp for a block to drop
+     *  @param block The block being mined
+     * @param item The item being used
+     * @param spawnEntity If to spawn the experience orbs as well
+     * @return The amount of exp
+     */
+    int getDefaultBlockExp(Block block, ItemStack item, boolean spawnEntity);
+
+    /**
      * Get's the base multiplier of an Item (Tool usually) on a block. This is taken
      * from the #getDestroySpeed(ItemStack item, IBlockData block) method in NMS, which gives
      * the base destroy multiplier based on the block and item
      *
-     * @param item The item trying to use
+     * @param item  The item trying to use
      * @param block The data of the block
      * @return The base multiplier
      */
@@ -60,7 +69,7 @@ public interface MiningHandler {
     /**
      * Checks if an item can destroy a block (is the appropriate tool for it)
      *
-     * @param item The item being used
+     * @param item  The item being used
      * @param block The block checking
      * @return If is the right tool
      */
@@ -78,7 +87,7 @@ public interface MiningHandler {
     /**
      * Used for a custom id based off block
      */
-    default int getBlockEntityId(org.bukkit.block.Block block){
+    default int getBlockEntityId(org.bukkit.block.Block block) {
         return ((block.getX() & 0xFFF) << 20 | (block.getZ() & 0xFFF) << 8) | (block.getY() & 0xFF);
     }
 

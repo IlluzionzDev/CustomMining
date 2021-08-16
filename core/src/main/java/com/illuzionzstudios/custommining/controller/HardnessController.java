@@ -1,12 +1,9 @@
 package com.illuzionzstudios.custommining.controller;
 
 import com.illuzionzstudios.custommining.CustomMining;
-import com.illuzionzstudios.mist.Logger;
 import com.illuzionzstudios.mist.controller.PluginController;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Control hardness of blocks, modifiers etc
@@ -15,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
  * All will be configurable giving the server owner full control over
  * how breaking works on their server. Also there will be permission
  * based modifiers so certain people can have different modifiers.
- *
+ * <p>
  * All information taken from these sources
  * https://minecraft.gamepedia.com/Breaking
  * https://minecraft.gamepedia.com/Mining_Fatigue
@@ -41,7 +38,7 @@ public enum HardnessController implements PluginController<CustomMining> {
      * in other methods but are linked here for the final result
      * <p>
      * Returning 0 means instantly break and < 0 means unbreakable
-     *
+     * <p>
      * https://minecraft.fandom.com/wiki/Breaking#Calculation
      *
      * @param block  The block trying to be mined

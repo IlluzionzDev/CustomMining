@@ -7,6 +7,7 @@ import net.minecraft.resources.MinecraftKey;
 import net.minecraft.sounds.SoundEffect;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectList;
+import net.minecraft.world.entity.EntityExperienceOrb;
 import net.minecraft.world.level.block.SoundEffectType;
 import net.minecraft.world.level.block.state.BlockBase;
 import net.minecraft.world.level.block.state.IBlockData;
@@ -14,15 +15,19 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftExperienceOrb;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Random;
 
 public class MiningHandler_1_17_R1 implements MiningHandler {
 
@@ -67,6 +72,18 @@ public class MiningHandler_1_17_R1 implements MiningHandler {
         }
         // Couldn't get hardness so it's unbreakable
         return -1f;
+    }
+
+    @Override
+    public int getDefaultBlockExp(Block block, ItemStack item, boolean spawnEntity) {
+        net.minecraft.world.level.block.Block nmsBlock = ((CraftBlock) block).getNMS().getBlock();
+        int exp = nmsBlock.getExpDrop(nmsBlock.getBlockData(), ((CraftWorld) block.getWorld()).getHandle(), new BlockPosition(block.getX(), block.getY(), block.getZ()), CraftItemStack.asNMSCopy(item));
+
+        if (spawnEntity) {
+            EntityExperienceOrb orb = new EntityExperienceOrb(((CraftWorld) block.getWorld()).getHandle(), block.getX(), block.getY(), block.getZ(), exp);
+            ((CraftWorld) block.getWorld()).addEntity(orb, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        }
+        return exp;
     }
 
     @Override
