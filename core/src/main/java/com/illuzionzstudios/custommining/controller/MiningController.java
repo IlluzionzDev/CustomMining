@@ -32,8 +32,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
@@ -322,15 +324,16 @@ public enum MiningController implements PluginController<CustomMining>, Listener
         // Block break effect
         handler.playBreakEffect(block);
 
+        ItemStack hand = player.getInventory().getItemInMainHand();
         // Use durability on item (account for unbreaking)
-        int durabilityLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.DURABILITY);
+        int durabilityLevel = hand.getEnchantmentLevel(Enchantment.DURABILITY);
         if (Math.random() <= (1 / (float) (durabilityLevel + 1))) {
-            int newDurability = player.getInventory().getItemInMainHand().getDurability();
-
-            if (newDurability >= player.getInventory().getItemInMainHand().getType().getMaxDurability() - 1) {
-                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                XSound.ENTITY_ITEM_BREAK.play(player);
-            } else player.getInventory().getItemInMainHand().setDurability((short) (newDurability + 1));
+            // Has durability
+            if (hand.getType().getMaxDurability() > 0) {
+                int newDurability = player.getInventory().getItemInMainHand().getDurability();
+                player.getInventory().getItemInMainHand().setDurability((short) (newDurability + 1));
+                Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(player, player.getInventory().getItemInMainHand(), 1));
+            }
         }
 
         // Force call block break event
@@ -342,6 +345,17 @@ public enum MiningController implements PluginController<CustomMining>, Listener
 
         // Drops based on item used
         block.breakNaturally(player.getInventory().getItemInMainHand());
+    }
+
+    /**
+     * Check for durability change from item and break it
+     */
+    @EventHandler
+    public void onDurabilityChange(PlayerItemDamageEvent event) {
+        if (event.getItem().getDurability() - event.getDamage() >= event.getItem().getType().getMaxDurability() - 1) {
+            event.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+            XSound.ENTITY_ITEM_BREAK.play(event.getPlayer());
+        }
     }
 
     /**
