@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.cryptomorin.xseries.XSound;
 import com.illuzionzstudios.custommining.*;
 import com.illuzionzstudios.custommining.settings.Settings;
 import com.illuzionzstudios.custommining.task.MiningTask;
@@ -20,6 +21,7 @@ import com.illuzionzstudios.mist.scheduler.rate.Rate;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ExperienceOrb;
@@ -31,6 +33,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
@@ -321,8 +324,14 @@ public enum MiningController implements PluginController<CustomMining>, Listener
 
         // Use durability on item (account for unbreaking)
         int durabilityLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.DURABILITY);
-        if (Math.random() <= (1 / (float) (durabilityLevel + 1)))
-            player.getInventory().getItemInMainHand().setDurability((short) (player.getInventory().getItemInMainHand().getDurability() + 1));
+        if (Math.random() <= (1 / (float) (durabilityLevel + 1))) {
+            int newDurability = player.getInventory().getItemInMainHand().getDurability();
+
+            if (newDurability >= player.getInventory().getItemInMainHand().getType().getMaxDurability() - 1) {
+                player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                XSound.ENTITY_ITEM_BREAK.play(player);
+            } else player.getInventory().getItemInMainHand().setDurability((short) (newDurability + 1));
+        }
 
         // Force call block break event
         BlockBreakEvent blockBreak = new BlockBreakEvent(block, player);
