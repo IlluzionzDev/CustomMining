@@ -1,0 +1,56 @@
+# This is some prototyping for formatting of a custom block config. Shows every option this config can
+# have. Some options can be missing and it just uses the global
+
+# Select the block exactly we are modifying here
+Selectors:
+  # The material of the block
+  Type: COAL_ORE
+  # Base hardness of this new block
+  Hardness: 2
+  # The region the block is in
+  Region: "__global__"
+  # World block is in
+  World: "global"
+  # Exact position of block
+  Position:
+    x: 0
+    y: 0
+    z: 0
+
+
+Mining:
+  # When a player stops mining this block, it will pause the breaking animation at
+  # where it was, and resume when they continue mining it
+  Save Progress: true
+  # How many seconds after saving progress on block to delete progress.
+  # This is to maximise performance and reduce lag, only works if Save Progress is enabled
+  Cleanup Delay: 10
+  # Seconds after a block starts being broken to remove the breaking task.
+  # This is in order to clear any tasks that didn't get enabled and not lag the server.
+  # If you have long break times set this high so it doesn't clear as they're breaking.
+  # Default clear every 5 minutes of old tasks
+  Cleanup Threshold: 300
+  # If set to true, all players in the radius when breaking a block
+  # will see the breaking animation
+  Broadcast Animation: true
+
+Modifiers:
+  # The calculation used to factor in efficiency. Only applies if is appropriate tool
+  Efficiency Calculation: "{breakSpeed} + ({efficiencyLevel} ^ 2 + 1)"
+  # The calculation factoring in the haste potion effect
+  Haste Calculation: "{breakSpeed} * (1 + (0.2 * {hasteLevel}))"
+  # The mining fatigue calculation at each level
+  Fatigue Calculation:
+    1: "{breakSpeed} * 0.3"
+    2: "{breakSpeed} * 0.09"
+    3: "{breakSpeed} * 0.0027"
+    # Any other level
+    other: "{breakSpeed} * 0.00081"
+  # The calculation that is applied when player is in water
+  Water Calculation: "{breakSpeed} / 5"
+  # The calculation that is applied when player isn't on ground
+  Air Calculation: "{breakSpeed} / 5"
+  # This is the final equation. Break speed is the speed that has gone through
+  # all other calculations such as tool speed and efficiency and inWater or not. This returns
+  # the final damage to be dealt. Final time in ticks is taken from "roundup(1 / damage)"
+  Breaktime Calculation: "({breakSpeed} / {hardness}) * (1 / ({doesToolHelp} ? 30 : 100))"

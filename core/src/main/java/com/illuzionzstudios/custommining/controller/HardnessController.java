@@ -41,6 +41,8 @@ public enum HardnessController implements PluginController<CustomMining> {
      * <p>
      * https://minecraft.fandom.com/wiki/Breaking#Calculation
      *
+     * Have to do our own calculations as only 1.17+ actually has a method that gets damage for us
+     *
      * @param block  The block trying to be mined
      * @param player The player mining the block
      * @return Break time in ticks

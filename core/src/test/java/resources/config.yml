@@ -1,0 +1,45 @@
+# These are the global settings for mining. Can be overriden by our custom
+# blocks and event code
+Mining:
+  # When a player stops mining a block, it will pause the breaking animation at
+  # where it was, and resume when they continue mining it
+  Save Progress: true
+  # How many seconds after saving progress on block to delete progress.
+  # This is to maximise performance and reduce lag, only works if Save Progress is enabled
+  Cleanup Delay: 10
+  # Seconds after a block starts being broken to remove the breaking task.
+  # This is in order to clear any tasks that didn't get enabled and not lag the server.
+  # If you have long break times set this high so it doesn't clear as they're breaking.
+  # Default clear every 5 minutes of old tasks
+  Cleanup Threshold: 300
+  # If set to true, all players in the radius when breaking a block
+  # will see the breaking animation
+  Broadcast Animation: true
+
+# Refer to https://minecraft.fandom.com/wiki/Breaking#Calculation for base calculations
+# All except for last are taken as breakSpeed = {equation}
+Modifiers:
+  # The calculation used to factor in efficiency. Only applies if is appropriate tool
+  Efficiency Calculation: "{breakSpeed} + ({efficiencyLevel} ^ 2 + 1)"
+  # The calculation factoring in the haste potion effect
+  Haste Calculation: "{breakSpeed} * (1 + (0.2 * {hasteLevel}))"
+  # The mining fatigue calculation at each level
+  Fatigue Calculation:
+    1: "{breakSpeed} * 0.3"
+    2: "{breakSpeed} * 0.09"
+    3: "{breakSpeed} * 0.0027"
+    # Any other level
+    other: "{breakSpeed} * 0.00081"
+  # The calculation that is applied when player is in water
+  Water Calculation: "{breakSpeed} / 5"
+  # The calculation that is applied when player isn't on ground
+  Air Calculation: "{breakSpeed} / 5"
+  # This is the final equation. Break speed is the speed that has gone through
+  # all other calculations such as tool speed and efficiency and inWater or not. This returns
+  # the final damage to be dealt. Final time in ticks is taken from "roundup(1 / damage)"
+  Breaktime Calculation: "({breakSpeed} / {hardness}) * (1 / ({doesToolHelp} ? 30 : 100))"
+
+Main:
+  # Make it so if World Guard makes a region unbreakable, they appear unbreakable
+  # like bedrock. (Required WorldGuard)
+  Unbreakable Regions: true
